@@ -269,19 +269,20 @@ bool YSort::GetPID(QUEUE qtmp)
     cutgproton = (TCutG *)gROOT->FindObject(((TString)("proton" + cutname)).Data());
     cutgtotal = (TCutG *)gROOT->FindObject(((TString)("total" + cutname)).Data());
 
-    if (cutgalpha->IsInside(qtmp.f, qtmp.s))
+    // Int_t TBox::IsInside(Double_t x, Double_t y) const; inside -=> 1 otherwise -=> 0
+    if (cutgalpha->IsInside(qtmp.s, qtmp.f))
     { // alpha
         alpha = 1;
         proton = 0;
         total = 1;
     }
-    else if (cutgproton->IsInside(qtmp.f, qtmp.s))
+    else if (cutgproton->IsInside(qtmp.s, qtmp.f))
     { // proton
         alpha = 0;
         proton = 1;
         total = 1;
     }
-    else if (cutgtotal->IsInside(qtmp.f, qtmp.s))
+    else if (cutgtotal->IsInside(qtmp.s, qtmp.f))
     { // total
         alpha = 0;
         proton = 0;
