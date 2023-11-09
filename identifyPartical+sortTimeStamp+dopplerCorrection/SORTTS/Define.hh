@@ -6,6 +6,7 @@
 #define _DEFINE_H_
 
 /*ROOT数据文件*/
+#define FINESIZEMIN 20  //MB
 #define RAWFILEPATH "/mnt/e/GC_fit/"
 #define RAWFILENAME "fit_gamma_csi"
 
