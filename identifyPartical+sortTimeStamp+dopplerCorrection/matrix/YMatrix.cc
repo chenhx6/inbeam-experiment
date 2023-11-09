@@ -12,9 +12,9 @@ YMatrix::YMatrix(int irunBegin, int irunEnd) : schargedDetectorFlag(0), sGeFlag(
 
 void YMatrix::Init()
 {
-    TChain *fchain = nullptr;
-    TFile *fchainFile = nullptr;
-    TFile *fopf = nullptr;
+    fchain = nullptr;
+    fchainFile = nullptr;
+    fopf = nullptr;
     fchain = new TChain("tree");
     ChainFile();
     fchain->SetBranchAddress("hit", &hit, &b_hit);
