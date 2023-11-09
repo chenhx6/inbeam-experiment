@@ -19,6 +19,11 @@ void YHit::Init()
         cerr << "Can't open root file: " << TString::Format("%s%s_%d.root", RAWFILEPATH, RAWFILENAME, run) << endl;
         exit(-1);
     }
+    else if ((ipf->GetSize() / 1024 / 1024) < FILESIZEMIN)
+    {
+        cerr << "Open wrong root file: " << TString::Format("%s%s_%d.root", RAWFILEPATH, RAWFILENAME, run) << endl;
+        exit(-1);
+    }
     ipt = (TTree *)ipf->Get("tree");
     ipt->SetBranchAddress("sr", &sr, &b_sr);
     ipt->SetBranchAddress("cid", &cid, &b_cid);
