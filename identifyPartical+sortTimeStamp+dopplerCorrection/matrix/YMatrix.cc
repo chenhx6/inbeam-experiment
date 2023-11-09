@@ -81,7 +81,7 @@ void YMatrix::ChainFile()
     TString schainFileName;
     for (int run = irunBegin; run <= irunEnd; run++)
     {
-        schainFileName = TString::Format("%s%s_%d_W%d%s%s.root", RAWFILEPATH, RAWFILENAME, run, EVENTTIMEWINDOWSWIDTH, DOPPLERFILENAME, ADDBACKFILENAME);
+        schainFileName = TString::Format("%s%s_%d_W%d%s%s.root", RAWFILEPATH, RAWFILENAME, run, EVENTTIMEWINDOWSWIDTH, ADDBACKFILENAME, DOPPLERFILENAME);
         if (!FileExist(schainFileName))
         {
             cerr << "Can't read file: " << schainFileName << endl;
