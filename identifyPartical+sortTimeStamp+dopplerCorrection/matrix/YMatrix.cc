@@ -132,7 +132,7 @@ void YMatrix::OutputFile()
 
 #endif
 
-    fopf = new TFile(TString::Format("%s%s%s%s%s%s_%d_%d.root", ROOTFILEPATH, ROOTFILENAME, GEGEFILE, GEGEAMFILE, CUBEMATRIXFILE, CUBEMATRIXAMFILE irunBegin, irunEnd).Data(), "RECREATE");
+    fopf = new TFile(TString::Format("%s%s%s%s%s%s_%d_%d.root", ROOTFILEPATH, ROOTFILENAME, GEGEFILE, GEGEAMFILE, CUBEMATRIXFILE, CUBEMATRIXAMFILE, irunBegin, irunEnd).Data(), "RECREATE");
     if (fopf->IsOpen())
     {
         cout << "Output file: " << fopf->GetPath() << endl;
