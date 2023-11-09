@@ -7,7 +7,7 @@
 
 /**
  * // raw_file
- * -=> TString::Format("%s%s_%d_W%d%s%s", RAWFILEPATH, RAWFILENAME, run, EVENTTIMEWINDOWSWIDTH, DOPPLERFILE, ADDBACKFILE)
+ * -=> TString::Format("%s%s_%d_W%d%s%s", RAWFILEPATH, RAWFILENAME, run, EVENTTIMEWINDOWSWIDTH, ADDBACKFILE, DOPPLERFILE)
  * !!!      "%s%s_%d_W%d%s%s"       !!!
  * if raw file have doppler -= > open elsewise close
  * if raw file have addback -=> open elsewise close
