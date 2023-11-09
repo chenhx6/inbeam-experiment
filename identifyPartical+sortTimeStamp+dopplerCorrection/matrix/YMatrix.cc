@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-11-07 01:42:15
- * @LastEditTime: 2023-11-09 09:14:13
+ * @LastEditTime: 2023-11-09 11:31:14
  */
 #include "YMatrix.hh"
 
@@ -49,13 +49,25 @@ bool YMatrix::FileExist(const TString &pschain_file_name)
 
     if (fchainFile->IsOpen())
     {
-        fchainFile->Close();
-        delete fchainFile;
-        fchainFile = nullptr;
-        return true;
+        if ((fchainFile->GetSize() / 1024 / 1024) < FILESIZEMIN)
+        {
+            cerr << "Open wrong file: " << pschain_file_name << endl;
+            fchainFile->Close();
+            delete fchainFile;
+            fchainFile = nullptr;
+            return false;
+        }
+        else
+        {
+            fchainFile->Close();
+            delete fchainFile;
+            fchainFile = nullptr;
+            return true;
+        }
     }
     else
     {
+        cerr << "Can't read file: " << pschain_file_name << endl;
         fchainFile->Close();
         delete fchainFile;
         fchainFile = nullptr;
@@ -86,10 +98,7 @@ void YMatrix::ChainFile()
     {
         schainFileName = TString::Format("%s%s_W%d_%d%s%s.root", RAWFILEPATH, RAWFILENAME, EVENTTIMEWINDOWSWIDTH, run, ADDBACKFILENAME, DOPPLERFILENAME);
         if (!FileExist(schainFileName))
-        {
-            cerr << "Can't read file: " << schainFileName << endl;
             continue;
-        }
 
         fchain->Add(schainFileName);
         cout << "Read file: " << schainFileName << endl;
@@ -104,9 +113,6 @@ void YMatrix::ChainFile()
  */
 void YMatrix::OutputFile()
 {
-    if (ltotalEntry < 100LL)
-        return;
-
 #ifdef GEGE
 #define GEGEFILE "_2PAM"
 #ifdef GEGEAM
@@ -133,6 +139,10 @@ void YMatrix::OutputFile()
 #endif
 
     fopf = new TFile(TString::Format("%s%s%s%s%s%s_%d_%d.root", ROOTFILEPATH, ROOTFILENAME, GEGEFILE, GEGEAMFILE, CUBEMATRIXFILE, CUBEMATRIXAMFILE, irunBegin, irunEnd).Data(), "RECREATE");
+#undef GEGEFILE
+#undef GEGEAMFILE
+#undef CUBEMATRIXFILE
+#undef CUBEMATRIXAMFILE
     if (fopf->IsOpen())
     {
         cout << "Output file: " << fopf->GetPath() << endl;

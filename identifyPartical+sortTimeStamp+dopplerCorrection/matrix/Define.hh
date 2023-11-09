@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-11-07 01:43:26
- * @LastEditTime: 2023-11-09 09:12:41
+ * @LastEditTime: 2023-11-09 17:31:53
  */
 #ifndef _DEFINE_H_
 #define _DEFINE_H_
@@ -14,6 +14,7 @@
  * tree(name) -=> HIT[HITLENGTH](title)
  */
 /* RAW FILE*/
+#define FILESIZEMIN 100 // MB
 #define RAWFILEPATH "/mnt/e/GC_event/"
 #define RAWFILENAME "event_hit"
 #define DOPPLERFILE "_doppler"
