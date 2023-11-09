@@ -146,7 +146,7 @@ private:
     // Thn *CreateHistogram(const TString pshname);
 
     template <typename Thn>
-    bool StoreHistogram(Thn *ph, const TString &psdir);
+    bool StoreHistogram(Thn *&ph, const TString &psdir);
 
     void Init();
     bool FileExist(const TString &pschain_file_name);
