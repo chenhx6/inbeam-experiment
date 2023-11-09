@@ -220,13 +220,15 @@ public:
  * @return - false write failed
  */
 template <typename Thn>
-bool YMatrix::StoreHistogram(Thn *ph, const TString &psdir)
+bool YMatrix::StoreHistogram(Thn *&ph, const TString &psdir)
 {
     fopf->cd(psdir.Data());
     if (ph != nullptr)
         if (ph->GetEntries() > LEASTENTRY)
         {
             ph->Write();
+            delete ph;
+            ph == nullptr;
             return true;
         }
         else
