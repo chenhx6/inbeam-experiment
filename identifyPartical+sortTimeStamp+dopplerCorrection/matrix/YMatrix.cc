@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-11-07 01:42:15
- * @LastEditTime: 2023-11-09 08:31:34
+ * @LastEditTime: 2023-11-09 09:14:13
  */
 #include "YMatrix.hh"
 
@@ -94,6 +94,8 @@ void YMatrix::ChainFile()
         fchain->Add(schainFileName);
         cout << "Read file: " << schainFileName << endl;
     }
+#undef ADDBACKFILENAME
+#undef DOPPLERFILENAME
 }
 
 /**
@@ -102,9 +104,35 @@ void YMatrix::ChainFile()
  */
 void YMatrix::OutputFile()
 {
-    if (ltotalEntry < 100)
+    if (ltotalEntry < 100LL)
         return;
-    fopf = new TFile(TString::Format("%s%s_%d_%d.root", ROOTFILEPATH, ROOTFILENAME, irunBegin, irunEnd).Data(), "RECREATE");
+
+#ifdef GEGE
+#define GEGEFILE "_2PAM"
+#ifdef GEGEAM
+#define GEGEAMFILE "_2PM"
+#else
+#define GEGEAMFILE ""
+#endif
+#else
+#define GEGEFILE ""
+#define GEGEAMFILE ""
+#endif
+
+#ifdef CUBEMATRIX
+#define CUBEMATRIXFILE "_3PAM"
+#ifdef CUBEMATRIXAM
+#define CUBEMATRIXAMFILE "_3PM"
+#else
+#define CUBEMATRIXAMFILE ""
+#endif
+#else
+#define CUBEMATRIXFILE ""
+#define CUBEMATRIXAMFILE ""
+
+#endif
+
+    fopf = new TFile(TString::Format("%s%s%s%s%s%s_%d_%d.root", ROOTFILEPATH, ROOTFILENAME, GEGEFILE, GEGEAMFILE, CUBEMATRIXFILE, CUBEMATRIXAMFILE irunBegin, irunEnd).Data(), "RECREATE");
     if (fopf->IsOpen())
     {
         cout << "Output file: " << fopf->GetPath() << endl;
@@ -180,25 +208,6 @@ void YMatrix::InitHistogram()
                 h1ggptPAM[j][k] = nullptr;
                 h1ggapPAM[i][j] = nullptr;
 
-#ifdef CUBEMATRIX
-                h3ggaptPAM[i][j][k] = nullptr;
-                h3ggatPAM[i][k] = nullptr;
-                h3ggptPAM[j][k] = nullptr;
-                h3ggapPAM[i][j] = nullptr;
-
-#ifdef CUBEMATRIXAM
-                h3ggaptAM[i][j][k] = nullptr;
-                h3ggatAM[i][k] = nullptr;
-                h3ggptAM[j][k] = nullptr;
-                h3ggapAM[i][j] = nullptr;
-
-                h3ggaptPM[i][j][k] = nullptr;
-                h3ggatPM[i][k] = nullptr;
-                h3ggptPM[j][k] = nullptr;
-                h3ggapPM[i][j] = nullptr;
-#endif
-#endif
-
 #ifdef GEGE
                 h2ggaptPAM[i][j][k] = nullptr;
                 h2ggatPAM[i][k] = nullptr;
@@ -224,6 +233,25 @@ void YMatrix::InitHistogram()
                 h2ggatPM[i][k] = nullptr;
                 h2ggptPM[j][k] = nullptr;
                 h2ggapPM[i][j] = nullptr;
+#endif
+#endif
+
+#ifdef CUBEMATRIX
+                h3ggaptPAM[i][j][k] = nullptr;
+                h3ggatPAM[i][k] = nullptr;
+                h3ggptPAM[j][k] = nullptr;
+                h3ggapPAM[i][j] = nullptr;
+
+#ifdef CUBEMATRIXAM
+                h3ggaptAM[i][j][k] = nullptr;
+                h3ggatAM[i][k] = nullptr;
+                h3ggptAM[j][k] = nullptr;
+                h3ggapAM[i][j] = nullptr;
+
+                h3ggaptPM[i][j][k] = nullptr;
+                h3ggatPM[i][k] = nullptr;
+                h3ggptPM[j][k] = nullptr;
+                h3ggapPM[i][j] = nullptr;
 #endif
 #endif
             }
@@ -702,9 +730,10 @@ void YMatrix::Process()
     for (Long64_t jentry = 0; jentry < ltotalEntry; ++jentry)
     {
         fchain->GetEntry(jentry);
+
         if (jentry % 10000 == 0)
             printf("\rProcessing: %lld | % lld | %.2f", jentry, ltotalEntry, (double)jentry / ltotalEntry * 100);
-        
+
         bfirstLoopHit = true;
         for (short cfirstlp = 0; cfirstlp < hit; cfirstlp++)
         {
@@ -757,7 +786,7 @@ void YMatrix::Process()
                 if (WhatDetector(id[gfristlp]) != sGeFlag)
                     continue;
 
-                ltsgFirst = GetTs(id[gfristlp], sr[gfristlp]);
+                ltsgFirst = GetTs(ts[gfristlp], sr[gfristlp]);
                 if (!TcoinL(ltsgFirst, ltsmin, GECSICOINWINDOWSL))
                     continue;
                 if (!TcoinR(ltsgFirst, ltsmax, GECSICOINWINDOWSR))
@@ -771,7 +800,7 @@ void YMatrix::Process()
                     if (WhatDetector(id[gsecondlp]) != sGeFlag)
                         continue;
 
-                    ltsgSecond = GetTs(id[gsecondlp], sr[gsecondlp]);
+                    ltsgSecond = GetTs(ts[gsecondlp], sr[gsecondlp]);
                     if (!TcoinL(ltsgSecond, ltsmin, GECSICOINWINDOWSL))
                         continue;
 
@@ -780,6 +809,11 @@ void YMatrix::Process()
 
                     if (TcoinLR(ltsgFirst, ltsgSecond, GEGECOINWINDOWS)) // prompt accidental  coincidence
                         bpamgFirstgSecond = true;
+
+                    if (TcoinLR(ltsgFirst, ltsgSecond, GEGEAMWINDOWL1, GEGEAMWINDOWR1)) // accidental  coincidence
+                        bamgFirstgSecond = true;
+                    else if (TcoinLR(ltsgFirst, ltsgSecond, GEGEAMWINDOWL2, GEGEAMWINDOWR2))
+                        bamgFirstgSecond = true;
 
 #ifndef CUBEMATRIX
                     if (bpamgFirstgSecond)
@@ -790,10 +824,6 @@ void YMatrix::Process()
 #ifdef GEGE
 #ifdef GEGEAM
 #ifndef CUBEMATRIXAM
-                    if (TcoinLR(ltsgFirst, ltsgSecond, GEGEAMWINDOWL1, GEGEAMWINDOWR1)) // accidental  coincidence
-                        bamgFirstgSecond = true;
-                    else if (TcoinLR(ltsgFirst, ltsgSecond, GEGEAMWINDOWL2, GEGEAMWINDOWR2))
-                        bamgFirstgSecond = true;
 
                     if (bamgFirstgSecond)
                         if (!FillHistogram(dpl[gfristlp], dpl[gsecondlp], salphaHit, sprotonHit, stotalHit, "2222"))
@@ -811,10 +841,10 @@ void YMatrix::Process()
                         if (gsecondlp == gthirdlp || gfristlp == gthirdlp) // had judge gfristlp == gsecondlp in second loop of gamma
                             continue;
 
-                        if (WhatDetector(id[gthirdlp]) != sGeFlag)
+                        if (WhatDetector(ts[gthirdlp]) != sGeFlag)
                             continue;
 
-                        ltsgThird = GetTs(id[gthirdlp], sr[gthirdlp]);
+                        ltsgThird = GetTs(ts[gthirdlp], sr[gthirdlp]);
                         if (!TcoinL(ltsgThird, ltsmin, GECSICOINWINDOWSL))
                             continue;
                         if (!TcoinR(ltsgThird, ltsmax, GECSICOINWINDOWSR))
@@ -829,11 +859,6 @@ void YMatrix::Process()
                             if (!FillHistogram(dpl[gfristlp], dpl[gsecondlp], salphaHit, sprotonHit, stotalHit, "1111", dpl[gthirdlp]))
                                 cerr << "can't fill histogram PAM, jentry = " << jentry << endl;
 #ifdef CUBEMATRIXAM
-                        if (TcoinLR(ltsgFirst, ltsgSecond, GEGEAMWINDOWL1, GEGEAMWINDOWR1)) // accidental  coincidence
-                            bamgFirstgSecond = true;
-                        else if (TcoinLR(ltsgFirst, ltsgSecond, GEGEAMWINDOWL2, GEGEAMWINDOWR2))
-                            bamgFirstgSecond = true;
-
                         if (TcoinLR(ltsgFirst, ltsgThird, GEGEAMWINDOWL1, GEGEAMWINDOWR1))
                             bamgFirstgThird = true;
                         else if (TcoinLR(ltsgFirst, ltsgThird, GEGEAMWINDOWL2, GEGEAMWINDOWR2))
@@ -861,7 +886,8 @@ void YMatrix::Process()
         cout << "Finish!" << endl;
     else
         cout << "failed" << endl;
-    fopf->Close();
+    if (fopf != nullptr)
+        fopf->Close();
 }
 
 /**

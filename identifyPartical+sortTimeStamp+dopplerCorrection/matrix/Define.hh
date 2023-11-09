@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-11-07 01:43:26
- * @LastEditTime: 2023-11-09 08:26:58
+ * @LastEditTime: 2023-11-09 09:12:41
  */
 #ifndef _DEFINE_H_
 #define _DEFINE_H_
@@ -45,8 +45,16 @@
 /*prompt + accidental windows*/
 /*accidental windows: be expected to decline x-ray or coulomp excitation*/
 // AM WINDOWS
-#define GEGE // switch about two fold matrix
-// #define GEGEAM // switch
+
+/*two dimension*/
+// #define GEGE // switch about two fold matrix
+#define GEGEAM // switch, if you want to use it, you must open GEGE
+
+/*three dimension*/
+// #define CUBEMATRIX
+#define CUBEMATRIXAM // switch, minus AM of cube matrix, if you want to use it, you must open CUBEMATRIX
+/*three-foder*/
+
 #define GEGEAMWINDOWL1 -150
 #define GEGEAMWINDOWR1 -100
 #define GEGEAMWINDOWL2 100
@@ -68,9 +76,5 @@
 #define PROTONPTCMAX 8
 
 /*histogram*/
-/*three-foder*/
-// #define CUBEMATRIX
-#define CUBEMATRIXAM // switch, minus AM of cube matrix, if you want to use it, you must open CUBEMATRIX
-/*three-foder*/
 
 #endif
