@@ -732,7 +732,7 @@ void YMatrix::Process()
         fchain->GetEntry(jentry);
 
         if (jentry % 10000 == 0)
-            printf("\rProcessing: %lld | % lld | %.2f", jentry, ltotalEntry, (double)jentry / ltotalEntry * 100);
+            printf("\rProcessing: %lld | % lld | %.2f%%", jentry, ltotalEntry, (double)jentry / ltotalEntry * 100);
 
         bfirstLoopHit = true;
         for (short cfirstlp = 0; cfirstlp < hit; cfirstlp++)
