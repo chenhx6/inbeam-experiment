@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-11-07 01:42:15
- * @LastEditTime: 2023-11-09 08:09:26
+ * @LastEditTime: 2023-11-09 08:31:34
  */
 #include "YMatrix.hh"
 
@@ -12,6 +12,9 @@ YMatrix::YMatrix(int irunBegin, int irunEnd) : schargedDetectorFlag(0), sGeFlag(
 
 void YMatrix::Init()
 {
+    TChain *fchain = nullptr;
+    TFile *fchainFile = nullptr;
+    TFile *fopf = nullptr;
     fchain = new TChain("tree");
     ChainFile();
     fchain->SetBranchAddress("hit", &hit, &b_hit);
@@ -81,7 +84,7 @@ void YMatrix::ChainFile()
     TString schainFileName;
     for (int run = irunBegin; run <= irunEnd; run++)
     {
-        schainFileName = TString::Format("%s%s_%d_W%d%s%s.root", RAWFILEPATH, RAWFILENAME, run, EVENTTIMEWINDOWSWIDTH, ADDBACKFILENAME, DOPPLERFILENAME);
+        schainFileName = TString::Format("%s%s_W%d_%d%s%s.root", RAWFILEPATH, RAWFILENAME, EVENTTIMEWINDOWSWIDTH, run, ADDBACKFILENAME, DOPPLERFILENAME);
         if (!FileExist(schainFileName))
         {
             cerr << "Can't read file: " << schainFileName << endl;
@@ -99,6 +102,8 @@ void YMatrix::ChainFile()
  */
 void YMatrix::OutputFile()
 {
+    if (ltotalEntry < 100)
+        return;
     fopf = new TFile(TString::Format("%s%s_%d_%d.root", ROOTFILEPATH, ROOTFILENAME, irunBegin, irunEnd).Data(), "RECREATE");
     if (fopf->IsOpen())
     {
@@ -901,6 +906,8 @@ bool YMatrix::FillPM()
 
 bool YMatrix::StoreFile()
 {
+    if (fopf == nullptr)
+        return false;
     for (short i = 0; i < (ALPHAPTCMAX + 1); i++)
         for (short j = 0; j < (PROTONPTCMAX + 1); j++)
             for (short k = 0; k < (TOTALPTCMAX + 1); k++)

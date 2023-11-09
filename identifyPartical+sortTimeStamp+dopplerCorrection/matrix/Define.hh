@@ -1,13 +1,13 @@
 /*
  * @Date: 2023-11-07 01:43:26
- * @LastEditTime: 2023-11-09 08:15:20
+ * @LastEditTime: 2023-11-09 08:26:58
  */
 #ifndef _DEFINE_H_
 #define _DEFINE_H_
 
 /**
  * // raw_file
- * -=> TString::Format("%s%s_%d_W%d%s%s", RAWFILEPATH, RAWFILENAME, run, EVENTTIMEWINDOWSWIDTH, ADDBACKFILE, DOPPLERFILE)
+ * -=> TString::Format("%s%s_W%d%d_%s%s", RAWFILEPATH, RAWFILENAME, EVENTTIMEWINDOWSWIDTH, run, ADDBACKFILE, DOPPLERFILE)
  * !!!      "%s%s_%d_W%d%s%s"       !!!
  * if raw file have doppler -= > open elsewise close
  * if raw file have addback -=> open elsewise close
