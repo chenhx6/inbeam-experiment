@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-11-07 01:43:26
- * @LastEditTime: 2023-11-09 17:31:53
+ * @LastEditTime: 2023-11-11 17:22:10
  */
 #ifndef _DEFINE_H_
 #define _DEFINE_H_
@@ -48,11 +48,11 @@
 // AM WINDOWS
 
 /*two dimension*/
-// #define GEGE // switch about two fold matrix
+#define GEGE   // switch about two fold matrix
 #define GEGEAM // switch, if you want to use it, you must open GEGE
 
 /*three dimension*/
-// #define CUBEMATRIX
+#define CUBEMATRIX
 #define CUBEMATRIXAM // switch, minus AM of cube matrix, if you want to use it, you must open CUBEMATRIX
 /*three-foder*/
 
@@ -70,11 +70,11 @@
 #define LEASTENTRY 0
 
 #define TOTALPTCMIN 0 //
-#define TOTALPTCMAX 8
+#define TOTALPTCMAX 1
 #define ALPHAPTCMIN 0
-#define ALPHAPTCMAX 5
+#define ALPHAPTCMAX 1
 #define PROTONPTCMIN 0
-#define PROTONPTCMAX 8
+#define PROTONPTCMAX 1
 
 /*histogram*/
 

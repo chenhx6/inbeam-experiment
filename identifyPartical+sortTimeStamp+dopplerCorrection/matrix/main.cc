@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-11-07 01:42:57
- * @LastEditTime: 2023-11-09 07:39:09
+ * @LastEditTime: 2023-11-10 13:12:36
  */
 #include "YMatrix.hh"
 
@@ -8,10 +8,16 @@ int main(int argc, char *argv[])
 {
     TString srunNumberBegin;
     TString srunNumberEnd; // [begin, end]
+    cout << "Process file from begining file  to end file! " << endl;
     if (argc == 3)
     {
         srunNumberBegin = argv[1];
         srunNumberEnd = argv[2];
+    }
+    else if (argc == 2)
+    {
+        srunNumberBegin = argv[1];
+        srunNumberEnd = argv[1];
     }
     else
     {

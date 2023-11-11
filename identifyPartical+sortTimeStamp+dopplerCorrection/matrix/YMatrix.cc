@@ -1,10 +1,10 @@
 /*
  * @Date: 2023-11-07 01:42:15
- * @LastEditTime: 2023-11-09 11:31:14
+ * @LastEditTime: 2023-11-11 18:51:27
  */
 #include "YMatrix.hh"
 
-YMatrix::YMatrix(int irunBegin, int irunEnd) : schargedDetectorFlag(0), sGeFlag(1), sLaBrFlag(2)
+YMatrix::YMatrix(int irunBegin, int irunEnd) : kschargedDetectorFlag(0), ksGeFlag(1), ksLaBrFlag(2)
 {
     this->irunBegin = irunBegin;
     this->irunEnd = irunEnd;
@@ -34,6 +34,7 @@ void YMatrix::Init()
     ltotalEntry = fchain->GetEntries();
     OutputFile();
     CreateHistogram();
+    cout << "Histogram have be created!" << endl;
 }
 
 /**
@@ -135,7 +136,6 @@ void YMatrix::OutputFile()
 #else
 #define CUBEMATRIXFILE ""
 #define CUBEMATRIXAMFILE ""
-
 #endif
 
     fopf = new TFile(TString::Format("%s%s%s%s%s%s_%d_%d.root", ROOTFILEPATH, ROOTFILENAME, GEGEFILE, GEGEAMFILE, CUBEMATRIXFILE, CUBEMATRIXAMFILE, irunBegin, irunEnd).Data(), "RECREATE");
@@ -150,7 +150,7 @@ void YMatrix::OutputFile()
     else
     {
         cerr << "Can't create output file: " << TString::Format("%s%s_%d_%d.root", ROOTFILEPATH, ROOTFILENAME, irunBegin, irunEnd) << endl;
-        exit(1);
+        exit(-1);
     }
 
     fopf->mkdir("PAM/TH1/AlphaProtonTotal");
@@ -158,27 +158,26 @@ void YMatrix::OutputFile()
     fopf->mkdir("PAM/TH1/ProtonTotal");
     fopf->mkdir("PAM/TH1/AlphaProton");
 
+    fopf->mkdir("AM/TH1/AlphaProtonTotal");
+    fopf->mkdir("AM/TH1/AlphaTotal");
+    fopf->mkdir("AM/TH1/ProtonTotal");
+    fopf->mkdir("AM/TH1/AlphaProton");
+
+    fopf->mkdir("PM/TH1/AlphaTotal");
+    fopf->mkdir("PM/TH1/AlphaProtonTotal");
+    fopf->mkdir("PM/TH1/ProtonTotal");
+    fopf->mkdir("PM/TH1/AlphaProton");
+
 #ifdef GEGE
     fopf->mkdir("PAM/TH2/AlphaProtonTotal");
     fopf->mkdir("PAM/TH2/AlphaTotal");
     fopf->mkdir("PAM/TH2/ProtonTotal");
     fopf->mkdir("PAM/TH2/AlphaProton");
 #ifdef GEGEAM
-
-    fopf->mkdir("AM/TH1/AlphaProtonTotal");
-    fopf->mkdir("AM/TH1/AlphaTotal");
-    fopf->mkdir("AM/TH1/ProtonTotal");
-    fopf->mkdir("AM/TH1/AlphaProton");
-
     fopf->mkdir("AM/TH2/AlphaProtonTotal");
     fopf->mkdir("AM/TH2/AlphaTotal");
     fopf->mkdir("AM/TH2/ProtonTotal");
     fopf->mkdir("AM/TH2/AlphaProton");
-
-    fopf->mkdir("PM/TH1/AlphaTotal");
-    fopf->mkdir("PM/TH1/AlphaProtonTotal");
-    fopf->mkdir("PM/TH1/ProtonTotal");
-    fopf->mkdir("PM/TH1/AlphaProton");
 
     fopf->mkdir("PM/TH2/AlphaProtonTotal");
     fopf->mkdir("PM/TH2/AlphaTotal");
@@ -192,7 +191,6 @@ void YMatrix::OutputFile()
     fopf->mkdir("PAM/TH3/AlphaTotal");
     fopf->mkdir("PAM/TH3/ProtonTotal");
     fopf->mkdir("PAM/TH3/AlphaProton");
-
 #ifdef CUBEMATRIXAM
     fopf->mkdir("AM/TH3/AlphaProtonTotal");
     fopf->mkdir("AM/TH3/AlphaTotal");
@@ -209,35 +207,34 @@ void YMatrix::OutputFile()
 
 void YMatrix::InitHistogram()
 {
-    for (short i = 0; i < (ALPHAPTCMAX + 1); i++)
-        for (short j = 0; j < (PROTONPTCMAX + 1); j++)
-            for (short k = 0; k < (TOTALPTCMAX + 1); k++)
+    for (short i = 0; i < (ALPHAPTCMAX - ALPHAPTCMIN + 1); i++)
+        for (short j = 0; j < (PROTONPTCMAX - PROTONPTCMIN + 1); j++)
+            for (short k = 0; k < (TOTALPTCMAX - TOTALPTCMIN + 1); k++)
             {
                 h1ggaptPAM[i][j][k] = nullptr;
                 h1ggatPAM[i][k] = nullptr;
                 h1ggptPAM[j][k] = nullptr;
                 h1ggapPAM[i][j] = nullptr;
 
+                h1ggaptAM[i][j][k] = nullptr;
+                h1ggatAM[i][k] = nullptr;
+                h1ggptAM[j][k] = nullptr;
+                h1ggapAM[i][j] = nullptr;
+
+                h1ggaptPM[i][j][k] = nullptr;
+                h1ggatPM[i][k] = nullptr;
+                h1ggptPM[j][k] = nullptr;
+                h1ggapPM[i][j] = nullptr;
 #ifdef GEGE
                 h2ggaptPAM[i][j][k] = nullptr;
                 h2ggatPAM[i][k] = nullptr;
                 h2ggptPAM[j][k] = nullptr;
                 h2ggapPAM[i][j] = nullptr;
 #ifdef GEGEAM
-                h1ggaptAM[i][j][k] = nullptr;
-                h1ggatAM[i][k] = nullptr;
-                h1ggptAM[j][k] = nullptr;
-                h1ggapAM[i][j] = nullptr;
-
                 h2ggaptAM[i][j][k] = nullptr;
                 h2ggatAM[i][k] = nullptr;
                 h2ggptAM[j][k] = nullptr;
                 h2ggapAM[i][j] = nullptr;
-
-                h1ggaptPM[i][j][k] = nullptr;
-                h1ggatPM[i][k] = nullptr;
-                h1ggptPM[j][k] = nullptr;
-                h1ggapPM[i][j] = nullptr;
 
                 h2ggaptPM[i][j][k] = nullptr;
                 h2ggatPM[i][k] = nullptr;
@@ -245,7 +242,6 @@ void YMatrix::InitHistogram()
                 h2ggapPM[i][j] = nullptr;
 #endif
 #endif
-
 #ifdef CUBEMATRIX
                 h3ggaptPAM[i][j][k] = nullptr;
                 h3ggatPAM[i][k] = nullptr;
@@ -279,45 +275,33 @@ void YMatrix::CreateHistogram()
     TString shggatname;
     TString shggptname;
     TString shggapname;
-    for (short i = 0; i < (ALPHAPTCMAX + 1); i++)
+    for (short i = 0; i < (ALPHAPTCMAX - ALPHAPTCMIN + 1); i++)
     {
-        for (short j = 0; j < (PROTONPTCMAX + 1); j++)
+        for (short j = 0; j < (PROTONPTCMAX - PROTONPTCMIN + 1); j++)
         {
-            for (short k = 0; k < (TOTALPTCMAX + 1); k++)
+            for (short k = 0; k < (TOTALPTCMAX - TOTALPTCMIN + 1); k++)
             {
-                shggaptname = TString::Format("alpha%d_proton%d_total%d", i, j, k);
-                shggatname = TString::Format("alpha%d_total%d", i, k);
-                shggptname = TString::Format("proton%d_total%d", j, k);
-                shggapname = TString::Format("alpha%d_proton%d", i, j);
+                shggaptname = TString::Format("alpha%d_proton%d_total%d", (i + ALPHAPTCMIN), (j + PROTONPTCMIN), (k + TOTALPTCMIN));
+                shggatname = TString::Format("alpha%d_total%d", (i + ALPHAPTCMIN), (k + TOTALPTCMIN));
+                shggptname = TString::Format("proton%d_total%d", (j + PROTONPTCMIN), (k + TOTALPTCMIN));
+                shggapname = TString::Format("alpha%d_proton%d", (i + ALPHAPTCMIN), (j + PROTONPTCMIN));
                 if (h1ggaptPAM[i][j][k] == nullptr)
                 {
-
-                    // h1ggaptPAM[i][j][k] = CreateHistogram<YTH1>(shggaptname + "PAM");
-                    // h2ggaptPAM[i][j][k] = CreateHistogram<YTH2>(shggaptname + "PAM");
                     CreateHistogram(h1ggaptPAM[i][j][k], shggaptname + "PAM");
+                    CreateHistogram(h1ggaptAM[i][j][k], shggaptname + "AM");
+                    CreateHistogram(h1ggaptPM[i][j][k], shggaptname + "PM");
+                    h1ggaptPM[i][j][k]->Sumw2(1);
 #ifdef GEGE
                     CreateHistogram(h2ggaptPAM[i][j][k], shggaptname + "PAM");
 #ifdef GEGEAM
-                    // h1ggaptAM[i][j][k] = CreateHistogram<YTH1>(shggaptname + "AM");
-                    // h2ggaptAM[i][j][k] = CreateHistogram<YTH2>(shggaptname + "AM");
-                    // h1ggaptPM[i][j][k] = CreateHistogram<YTH1>(shggaptname + "PM");
-                    // h2ggaptPM[i][j][k] = CreateHistogram<YTH2>(shggaptname + "PM");
-                    CreateHistogram(h1ggaptAM[i][j][k], shggaptname + "AM");
                     CreateHistogram(h2ggaptAM[i][j][k], shggaptname + "AM");
-                    CreateHistogram(h1ggaptPM[i][j][k], shggaptname + "PM");
                     CreateHistogram(h2ggaptPM[i][j][k], shggaptname + "PM");
-                    h1ggaptPM[i][j][k]->Sumw2(1);
                     h2ggaptPM[i][j][k]->Sumw2(1);
-
 #endif
 #endif
-
 #ifdef CUBEMATRIX
-                    // h3ggaptPAM[i][j][k] = CreateHistogram<YTH3>(shggaptname + "PAM");
                     CreateHistogram(h3ggaptPAM[i][j][k], shggaptname + "PAM");
 #ifdef CUBEMATRIXAM
-                    // h3ggaptAM[i][j][k] = CreateHistogram<YTH3>(shggaptname + "AM");
-                    // h3ggaptPM[i][j][k] = CreateHistogram<YTH3>(shggaptname + "PM");
                     CreateHistogram(h3ggaptAM[i][j][k], shggaptname + "AM");
                     CreateHistogram(h3ggaptPM[i][j][k], shggaptname + "PM");
                     h3ggaptPM[i][j][k]->Sumw2(1);
@@ -326,69 +310,44 @@ void YMatrix::CreateHistogram()
                 }
                 if (h1ggatPAM[i][k] == nullptr)
                 {
-                    // h1ggatPAM[i][k] = CreateHistogram<YTH1>(shggatname + "PAM");
-                    // h2ggatPAM[i][k] = CreateHistogram<YTH2>(shggatname + "PAM");
                     CreateHistogram(h1ggatPAM[i][k], shggatname + "PAM");
+                    CreateHistogram(h1ggatAM[i][k], shggatname + "AM");
+                    CreateHistogram(h1ggatPM[i][k], shggatname + "PM");
+                    h1ggatPM[i][k]->Sumw2(1);
 #ifdef GEGE
                     CreateHistogram(h2ggatPAM[i][k], shggatname + "PAM");
-
 #ifdef GEGEAM
-                    // h1ggatAM[i][k] = CreateHistogram<YTH1>(shggatname + "AM");
-                    // h2ggatAM[i][k] = CreateHistogram<YTH2>(shggatname + "AM");
-                    // h1ggatPM[i][k] = CreateHistogram<YTH1>(shggatname + "PM");
-                    // h2ggatPM[i][k] = CreateHistogram<YTH2>(shggatname + "PM");
-                    CreateHistogram(h1ggatAM[i][k], shggatname + "AM");
                     CreateHistogram(h2ggatAM[i][k], shggatname + "AM");
-                    CreateHistogram(h1ggatPM[i][k], shggatname + "PM");
                     CreateHistogram(h2ggatPM[i][k], shggatname + "PM");
-                    h1ggatPM[i][k]->Sumw2(1);
                     h2ggatPM[i][k]->Sumw2(1);
-
 #endif
 #endif
-
 #ifdef CUBEMATRIX
-                    // h3ggatPAM[i][k] = CreateHistogram<YTH3>(shggatname + "PAM");
                     CreateHistogram(h3ggatPAM[i][k], shggatname + "PAM");
 #ifdef CUBEMATRIXAM
-                    // h3ggatAM[i][k] = CreateHistogram<YTH3>(shggatname + "AM");
-                    // h3ggatPM[i][k] = CreateHistogram<YTH3>(shggatname + "PM");
                     CreateHistogram(h3ggatAM[i][k], shggatname + "AM");
                     CreateHistogram(h3ggatPM[i][k], shggatname + "PM");
                     h3ggatPM[i][k]->Sumw2(1);
-
 #endif
 #endif
                 }
                 if (h1ggptPAM[j][k] == nullptr)
                 {
-
-                    // h1ggptPAM[j][k] = CreateHistogram<YTH1>(shggptname + "PAM");
-                    // h2ggptPAM[j][k] = CreateHistogram<YTH2>(shggptname + "PAM");
                     CreateHistogram(h1ggptPAM[j][k], shggptname + "PAM");
+                    CreateHistogram(h1ggptAM[j][k], shggptname + "AM");
+                    CreateHistogram(h1ggptPM[j][k], shggptname + "PM");
+                    h1ggptPM[j][k]->Sumw2(1);
 #ifdef GEGE
                     CreateHistogram(h2ggptPAM[j][k], shggptname + "PAM");
-
 #ifdef GEGEAM
-                    // h1ggptAM[j][k] = CreateHistogram<YTH1>(shggptname + "AM");
-                    // h2ggptAM[j][k] = CreateHistogram<YTH2>(shggptname + "AM");
-                    // h1ggptPM[j][k] = CreateHistogram<YTH1>(shggptname + "PM");
-                    // h2ggptPM[j][k] = CreateHistogram<YTH2>(shggptname + "PM");
-                    CreateHistogram(h1ggptAM[j][k], shggptname + "AM");
                     CreateHistogram(h2ggptAM[j][k], shggptname + "AM");
-                    CreateHistogram(h1ggptPM[j][k], shggptname + "PM");
                     CreateHistogram(h2ggptPM[j][k], shggptname + "PM");
-                    h1ggptPM[j][k]->Sumw2(1);
                     h2ggptPM[j][k]->Sumw2(1);
 #endif
 #endif
-
 #ifdef CUBEMATRIX
-                    // h3ggptPAM[j][k] = CreateHistogram<YTH3>(shggptname + "PAM");
                     CreateHistogram(h3ggptPAM[j][k], shggptname + "PAM");
 #ifdef CUBEMATRIXAM
-                    // h3ggptAM[j][k] = CreateHistogram<YTH3>(shggptname + "AM");
-                    // h3ggptPM[j][k] = CreateHistogram<YTH3>(shggptname + "PM");
                     CreateHistogram(h3ggptAM[j][k], shggptname + "AM");
                     CreateHistogram(h3ggptPM[j][k], shggptname + "PM");
                     h3ggptPM[j][k]->Sumw2(1);
@@ -397,33 +356,21 @@ void YMatrix::CreateHistogram()
                 }
                 if (h1ggapPAM[i][j] == nullptr)
                 {
-
-                    // h1ggapPAM[i][j] = CreateHistogram<YTH1>(shggapname + "PAM");
-                    // h2ggapPAM[i][j] = CreateHistogram<YTH2>(shggapname + "PAM");
                     CreateHistogram(h1ggapPAM[i][j], shggapname + "PAM");
+                    CreateHistogram(h1ggapAM[i][j], shggapname + "AM");
+                    CreateHistogram(h1ggapPM[i][j], shggapname + "PM");
+                    h1ggapPM[i][j]->Sumw2(1);
 #ifdef GEGE
                     CreateHistogram(h2ggapPAM[i][j], shggapname + "PAM");
 #ifdef GEGEAM
-                    // h1ggapAM[i][j] = CreateHistogram<YTH1>(shggapname + "AM");
-                    // h2ggapAM[i][j] = CreateHistogram<YTH2>(shggapname + "AM");
-                    // h1ggapPM[i][j] = CreateHistogram<YTH1>(shggapname + "PM");
-                    // h2ggapPM[i][j] = CreateHistogram<YTH2>(shggapname + "PM");
-                    CreateHistogram(h1ggapAM[i][j], shggapname + "AM");
                     CreateHistogram(h2ggapAM[i][j], shggapname + "AM");
-                    CreateHistogram(h1ggapPM[i][j], shggapname + "PM");
                     CreateHistogram(h2ggapPM[i][j], shggapname + "PM");
-                    h1ggapPM[i][j]->Sumw2(1);
                     h2ggapPM[i][j]->Sumw2(1);
-
 #endif
 #endif
-
 #ifdef CUBEMATRIX
-                    // h3ggapPAM[i][j] = CreateHistogram<YTH3>(shggapname + "PAM");
                     CreateHistogram(h3ggapPAM[i][j], shggapname + "PAM");
 #ifdef CUBEMATRIXAM
-                    // h3ggapAM[i][j] = CreateHistogram<YTH3>(shggapname + "AM");
-                    // h3ggapPM[i][j] = CreateHistogram<YTH3>(shggapname + "PM");
                     CreateHistogram(h3ggapAM[i][j], shggapname + "AM");
                     CreateHistogram(h3ggapPM[i][j], shggapname + "PM");
                     h3ggapPM[i][j]->Sumw2(1);
@@ -478,8 +425,10 @@ bool YMatrix::CreateHistogram(YTH3 *&phistogram, const TString &pshname)
         return false;
     }
 }
+
 /**
  * @brief Fill histogram[alpha][proton][total], histogram[alpha][total], histogram[proton][total], or histogram[alpha][proton]
+ * @brief A_{n}^{2} = C_{n}^{2} *2; A_{n}^{3} = C_{n}^{3} * 6;
  * @param pde1
  * @param pde2
  * @param pa hit alpha number
@@ -501,11 +450,14 @@ bool YMatrix::CreateHistogram(YTH3 *&phistogram, const TString &pshname)
  * @return - true sucessfully fill
  * @return - false failed fill
  */
-bool YMatrix::FillHistogram(const double &pde1, const double &pde2, const short &pa, const short &pp, const short &pt, const TString &psoption, const double &pde3)
+bool YMatrix::FillHistogramSYM(const double &pde1, const double &pde2, const short &pa, const short &pp, const short &pt, const TString &psoption, const double &pde3)
 {
     int ioption = psoption.Atoi();
     int ifapt1 = 0, ifat1 = 0, ifpt1 = 0, ifap1 = 0;
     int ifapt2 = 0, ifat2 = 0, ifpt2 = 0, ifap2 = 0;
+    short alphaCode = pa - ALPHAPTCMIN;
+    short protonCode = pp - PROTONPTCMIN;
+    short totalCode = pt - TOTALPTCMIN;
 
     /*------------- PAM ------------*/
 
@@ -513,103 +465,102 @@ bool YMatrix::FillHistogram(const double &pde1, const double &pde2, const short 
     if (((ioption / 1000) % 10) == 1)
     {
 
-        if (h1ggaptPAM[pa][pp][pt] != nullptr)
+        if (h1ggaptPAM[alphaCode][protonCode][totalCode] != nullptr)
         {
             ifapt1 = 1;
-            h1ggaptPAM[pa][pp][pt]->Fill(pde1);
+            h1ggaptPAM[alphaCode][protonCode][totalCode]->Fill(pde1);
+            h1ggaptPAM[alphaCode][protonCode][totalCode]->Fill(pde2);
 #ifdef GEGE
-            h2ggaptPAM[pa][pp][pt]->Fill(pde1, pde2);
+            h2ggaptPAM[alphaCode][protonCode][totalCode]->Fill(pde1, pde2);
+            h2ggaptPAM[alphaCode][protonCode][totalCode]->Fill(pde2, pde1);
 #endif
-        }
-        else
-            ifapt1 = 0;
-
 #ifdef CUBEMATRIX
-        if (h3ggaptPAM[pa][pp][pt] != nullptr)
-        {
-            ifapt1 = 1;
-            h3ggaptPAM[pa][pp][pt]->Fill(pde1, pde2, pde3);
+            h3ggaptPAM[alphaCode][protonCode][totalCode]->Fill(pde1, pde2, pde3);
+            h3ggaptPAM[alphaCode][protonCode][totalCode]->Fill(pde1, pde3, pde2);
+            h3ggaptPAM[alphaCode][protonCode][totalCode]->Fill(pde2, pde1, pde3);
+            h3ggaptPAM[alphaCode][protonCode][totalCode]->Fill(pde2, pde3, pde1);
+            h3ggaptPAM[alphaCode][protonCode][totalCode]->Fill(pde3, pde1, pde2);
+            h3ggaptPAM[alphaCode][protonCode][totalCode]->Fill(pde3, pde2, pde1);
+#endif
         }
         else
             ifapt1 = 0;
-#endif
     }
 
     // do at
     if (((ioption / 100) % 10) == 1)
     {
-        if (h1ggatPAM[pa][pt] != nullptr)
+        if (h1ggatPAM[alphaCode][totalCode] != nullptr)
         {
             ifat1 = 1;
-            h1ggatPAM[pa][pt]->Fill(pde1);
+            h1ggatPAM[alphaCode][totalCode]->Fill(pde1);
+            h1ggatPAM[alphaCode][totalCode]->Fill(pde2);
 #ifdef GEGE
-            h2ggatPAM[pa][pt]->Fill(pde1, pde2);
+            h2ggatPAM[alphaCode][totalCode]->Fill(pde1, pde2);
+            h2ggatPAM[alphaCode][totalCode]->Fill(pde2, pde1);
 #endif
-        }
-        else
-            ifat1 = 0;
 
 #ifdef CUBEMATRIX
-        if (h3ggatPAM[pa][pt] != nullptr)
-        {
-            ifat1 = 1;
-            h3ggatPAM[pa][pt]->Fill(pde1, pde2, pde3);
+            h3ggatPAM[alphaCode][totalCode]->Fill(pde1, pde2, pde3);
+            h3ggatPAM[alphaCode][totalCode]->Fill(pde1, pde3, pde2);
+            h3ggatPAM[alphaCode][totalCode]->Fill(pde2, pde1, pde3);
+            h3ggatPAM[alphaCode][totalCode]->Fill(pde2, pde3, pde1);
+            h3ggatPAM[alphaCode][totalCode]->Fill(pde3, pde1, pde2);
+            h3ggatPAM[alphaCode][totalCode]->Fill(pde3, pde2, pde1);
+#endif
         }
         else
             ifat1 = 0;
-#endif
     }
 
     // do pt
     if (((ioption / 10) % 10) == 1)
     {
-        if (h1ggptPAM[pp][pt] != nullptr)
+        if (h1ggptPAM[protonCode][totalCode] != nullptr)
         {
             ifpt1 = 1;
-            h1ggptPAM[pp][pt]->Fill(pde1);
+            h1ggptPAM[protonCode][totalCode]->Fill(pde1);
+            h1ggptPAM[protonCode][totalCode]->Fill(pde2);
 #ifdef GEGE
-
-            h2ggptPAM[pp][pt]->Fill(pde1, pde2);
+            h2ggptPAM[protonCode][totalCode]->Fill(pde1, pde2);
+            h2ggptPAM[protonCode][totalCode]->Fill(pde2, pde1);
 #endif
-        }
-        else
-            ifpt1 = 0;
-
 #ifdef CUBEMATRIX
-        if (h3ggptPAM[pp][pt] != nullptr)
-        {
-            ifpt1 = 1;
-            h3ggptPAM[pp][pt]->Fill(pde1, pde2, pde3);
+            h3ggptPAM[protonCode][totalCode]->Fill(pde1, pde2, pde3);
+            h3ggptPAM[protonCode][totalCode]->Fill(pde1, pde3, pde2);
+            h3ggptPAM[protonCode][totalCode]->Fill(pde2, pde1, pde3);
+            h3ggptPAM[protonCode][totalCode]->Fill(pde2, pde3, pde1);
+            h3ggptPAM[protonCode][totalCode]->Fill(pde3, pde1, pde2);
+            h3ggptPAM[protonCode][totalCode]->Fill(pde3, pde2, pde1);
+#endif
         }
         else
             ifpt1 = 0;
-#endif
     }
 
     // do ap
     if (((ioption / 1) % 10) == 1)
     {
-        if (h1ggapPAM[pa][pp] != nullptr)
+        if (h1ggapPAM[alphaCode][protonCode] != nullptr)
         {
             ifap1 = 1;
-            h1ggapPAM[pa][pp]->Fill(pde1);
+            h1ggapPAM[alphaCode][protonCode]->Fill(pde1);
+            h1ggapPAM[alphaCode][protonCode]->Fill(pde2);
 #ifdef GEGE
-
-            h2ggapPAM[pa][pp]->Fill(pde1, pde2);
+            h2ggapPAM[alphaCode][protonCode]->Fill(pde1, pde2);
+            h2ggapPAM[alphaCode][protonCode]->Fill(pde2, pde1);
 #endif
-        }
-        else
-            ifap1 = 0;
-
 #ifdef CUBEMATRIX
-        if (h3ggapPAM[pa][pp] != nullptr)
-        {
-            ifap1 = 1;
-            h3ggapPAM[pa][pp]->Fill(pde1, pde2, pde3);
+            h3ggapPAM[alphaCode][protonCode]->Fill(pde1, pde2, pde3);
+            h3ggapPAM[alphaCode][protonCode]->Fill(pde1, pde3, pde2);
+            h3ggapPAM[alphaCode][protonCode]->Fill(pde2, pde1, pde3);
+            h3ggapPAM[alphaCode][protonCode]->Fill(pde2, pde3, pde1);
+            h3ggapPAM[alphaCode][protonCode]->Fill(pde3, pde1, pde2);
+            h3ggapPAM[alphaCode][protonCode]->Fill(pde3, pde2, pde1);
+#endif
         }
         else
             ifap1 = 0;
-#endif
     }
 
     /*------------- AM ------------*/
@@ -617,139 +568,345 @@ bool YMatrix::FillHistogram(const double &pde1, const double &pde2, const short 
     // do apt
     if (((ioption / 1000) % 10) == 2)
     {
+
+        if (h1ggaptAM[alphaCode][protonCode][totalCode] != nullptr)
+        {
+            ifapt2 = 2;
+            h1ggaptAM[alphaCode][protonCode][totalCode]->Fill(pde1);
+            h1ggaptAM[alphaCode][protonCode][totalCode]->Fill(pde2);
 #ifdef GEGE
 #ifdef GEGEAM
-        if (h1ggaptAM[pa][pp][pt] != nullptr)
-        {
-            ifapt2 = 2;
-            h1ggaptAM[pa][pp][pt]->Fill(pde1);
-            h2ggaptAM[pa][pp][pt]->Fill(pde1, pde2);
-        }
-        else
-            ifapt2 = 0;
+            h2ggaptAM[alphaCode][protonCode][totalCode]->Fill(pde1, pde2);
+            h2ggaptAM[alphaCode][protonCode][totalCode]->Fill(pde2, pde1);
 #endif
 #endif
-
 #ifdef CUBEMATRIX
 #ifdef CUBEMATRIXAM
-        if (h3ggaptAM[pa][pp][pt] != nullptr)
-        {
-            ifapt2 = 2;
-            h3ggaptAM[pa][pp][pt]->Fill(pde1, pde2, pde3);
+            h3ggaptAM[alphaCode][protonCode][totalCode]->Fill(pde1, pde2, pde3);
+            h3ggaptAM[alphaCode][protonCode][totalCode]->Fill(pde1, pde3, pde2);
+            h3ggaptAM[alphaCode][protonCode][totalCode]->Fill(pde2, pde1, pde3);
+            h3ggaptAM[alphaCode][protonCode][totalCode]->Fill(pde2, pde3, pde1);
+            h3ggaptAM[alphaCode][protonCode][totalCode]->Fill(pde3, pde1, pde2);
+            h3ggaptAM[alphaCode][protonCode][totalCode]->Fill(pde3, pde2, pde1);
+#endif
+#endif
         }
         else
             ifapt2 = 0;
-#endif
-#endif
     }
 
     // do at
     if (((ioption / 100) % 10) == 2)
     {
+
+        if (h1ggatAM[alphaCode][totalCode] != nullptr)
+        {
+            ifat2 = 2;
+            h1ggatAM[alphaCode][totalCode]->Fill(pde1);
+            h1ggatAM[alphaCode][totalCode]->Fill(pde2);
 #ifdef GEGE
 #ifdef GEGEAM
-        if (h1ggatAM[pa][pt] != nullptr)
-        {
-            ifat2 = 2;
-            h1ggatAM[pa][pt]->Fill(pde1);
-            h2ggatAM[pa][pt]->Fill(pde1, pde2);
-        }
-        else
-            ifat2 = 0;
+            h2ggatAM[alphaCode][totalCode]->Fill(pde1, pde2);
+            h2ggatAM[alphaCode][totalCode]->Fill(pde2, pde1);
 #endif
 #endif
-
 #ifdef CUBEMATRIX
 #ifdef CUBEMATRIXAM
-        if (h3ggatAM[pa][pt] != nullptr)
-        {
-            ifat2 = 2;
-            h3ggatAM[pa][pt]->Fill(pde1, pde2, pde3);
+            h3ggatAM[alphaCode][totalCode]->Fill(pde1, pde2, pde3);
+            h3ggatAM[alphaCode][totalCode]->Fill(pde1, pde3, pde2);
+            h3ggatAM[alphaCode][totalCode]->Fill(pde2, pde1, pde3);
+            h3ggatAM[alphaCode][totalCode]->Fill(pde2, pde3, pde1);
+            h3ggatAM[alphaCode][totalCode]->Fill(pde3, pde1, pde2);
+            h3ggatAM[alphaCode][totalCode]->Fill(pde3, pde2, pde1);
+#endif
+#endif
         }
         else
             ifat2 = 0;
-#endif
-#endif
     }
 
     // do pt
     if (((ioption / 10) % 10) == 2)
     {
+
+        if (h1ggptAM[protonCode][totalCode] != nullptr)
+        {
+            ifpt2 = 2;
+            h1ggptAM[protonCode][totalCode]->Fill(pde1);
+            h1ggptAM[protonCode][totalCode]->Fill(pde2);
 #ifdef GEGE
 #ifdef GEGEAM
-        if (h1ggptAM[pp][pt] != nullptr)
-        {
-            ifpt2 = 2;
-            h1ggptAM[pp][pt]->Fill(pde1);
-            h2ggptAM[pp][pt]->Fill(pde1, pde2);
-        }
-        else
-            ifpt2 = 0;
+            h2ggptAM[protonCode][totalCode]->Fill(pde1, pde2);
+            h2ggptAM[protonCode][totalCode]->Fill(pde2, pde1);
 #endif
 #endif
-
 #ifdef CUBEMATRIX
 #ifdef CUBEMATRIXAM
-        if (h3ggptAM[pp][pt] != nullptr)
-        {
-            ifpt2 = 2;
-            h3ggptAM[pp][pt]->Fill(pde1, pde2, pde3);
+            h3ggptAM[protonCode][totalCode]->Fill(pde1, pde2, pde3);
+            h3ggptAM[protonCode][totalCode]->Fill(pde1, pde3, pde2);
+            h3ggptAM[protonCode][totalCode]->Fill(pde2, pde1, pde3);
+            h3ggptAM[protonCode][totalCode]->Fill(pde2, pde3, pde1);
+            h3ggptAM[protonCode][totalCode]->Fill(pde3, pde1, pde2);
+            h3ggptAM[protonCode][totalCode]->Fill(pde3, pde2, pde1);
+#endif
+#endif
         }
         else
             ifpt2 = 0;
-#endif
-#endif
     }
 
     // do ap
     if (((ioption / 1) % 10) == 2)
     {
+
+        if (h1ggapAM[alphaCode][protonCode] != nullptr)
+        {
+            ifap2 = 2;
+            h1ggapAM[alphaCode][protonCode]->Fill(pde1);
+            h1ggapAM[alphaCode][protonCode]->Fill(pde2);
 #ifdef GEGE
 #ifdef GEGEAM
-        if (h1ggapAM[pa][pp] != nullptr)
-        {
-            ifap2 = 2;
-            h1ggapAM[pa][pp]->Fill(pde1);
-            h2ggapAM[pa][pp]->Fill(pde1, pde2);
-        }
-        else
-            ifap2 = 0;
+            h2ggapAM[alphaCode][protonCode]->Fill(pde1, pde2);
+            h2ggapAM[alphaCode][protonCode]->Fill(pde2, pde1);
 #endif
 #endif
-
 #ifdef CUBEMATRIX
 #ifdef CUBEMATRIXAM
-        if (h3ggapAM[pa][pp] != nullptr)
-        {
-            ifap2 = 2;
-            h3ggapAM[pa][pp]->Fill(pde1, pde2, pde3);
+            h3ggapAM[alphaCode][protonCode]->Fill(pde1, pde2, pde3);
+            h3ggapAM[alphaCode][protonCode]->Fill(pde1, pde3, pde2);
+            h3ggapAM[alphaCode][protonCode]->Fill(pde2, pde1, pde3);
+            h3ggapAM[alphaCode][protonCode]->Fill(pde2, pde3, pde1);
+            h3ggapAM[alphaCode][protonCode]->Fill(pde3, pde1, pde2);
+            h3ggapAM[alphaCode][protonCode]->Fill(pde3, pde2, pde1);
+#endif
+#endif
         }
         else
             ifap2 = 0;
-#endif
-#endif
     }
 
     return (ioption == (((ifapt1 + ifapt2) * 1000) + ((ifat1 + ifat2) * 100) + ((ifpt1 + ifpt2) * 10) + ((ifap1 + ifap2) * 1)));
 }
 
+bool YMatrix::FillHistogramNOSYM(const double &pde1, const double &pde2, const short &pa, const short &pp, const short &pt, const TString &psoption, const double &pde3)
+{
+
+    int ioption = psoption.Atoi();
+    int ifapt1 = 0, ifat1 = 0, ifpt1 = 0, ifap1 = 0;
+    int ifapt2 = 0, ifat2 = 0, ifpt2 = 0, ifap2 = 0;
+    short alphaCode = pa - ALPHAPTCMIN;
+    short protonCode = pp - PROTONPTCMIN;
+    short totalCode = pt - TOTALPTCMIN;
+
+    /*------------- PAM ------------*/
+
+    // do apt
+    if (((ioption / 1000) % 10) == 1)
+    {
+
+        if (h1ggaptPAM[alphaCode][protonCode][totalCode] != nullptr)
+        {
+            ifapt1 = 1;
+            h1ggaptPAM[alphaCode][protonCode][totalCode]->Fill(pde1);
+#ifdef GEGE
+            h2ggaptPAM[alphaCode][protonCode][totalCode]->Fill(pde1, pde2);
+#endif
+#ifdef CUBEMATRIX
+            h3ggaptPAM[alphaCode][protonCode][totalCode]->Fill(pde1, pde2, pde3);
+#endif
+        }
+        else
+            ifapt1 = 0;
+    }
+
+    // do at
+    if (((ioption / 100) % 10) == 1)
+    {
+        if (h1ggatPAM[alphaCode][totalCode] != nullptr)
+        {
+            ifat1 = 1;
+            h1ggatPAM[alphaCode][totalCode]->Fill(pde1);
+#ifdef GEGE
+            h2ggatPAM[alphaCode][totalCode]->Fill(pde1, pde2);
+#endif
+#ifdef CUBEMATRIX
+            h3ggatPAM[alphaCode][totalCode]->Fill(pde1, pde2, pde3);
+#endif
+        }
+        else
+            ifat1 = 0;
+    }
+
+    // do pt
+    if (((ioption / 10) % 10) == 1)
+    {
+        if (h1ggptPAM[protonCode][totalCode] != nullptr)
+        {
+            ifpt1 = 1;
+            h1ggptPAM[protonCode][totalCode]->Fill(pde1);
+#ifdef GEGE
+
+            h2ggptPAM[protonCode][totalCode]->Fill(pde1, pde2);
+#endif
+#ifdef CUBEMATRIX
+            h3ggptPAM[protonCode][totalCode]->Fill(pde1, pde2, pde3);
+#endif
+        }
+        else
+            ifpt1 = 0;
+    }
+
+    // do ap
+    if (((ioption / 1) % 10) == 1)
+    {
+        if (h1ggapPAM[alphaCode][protonCode] != nullptr)
+        {
+            ifap1 = 1;
+            h1ggapPAM[alphaCode][protonCode]->Fill(pde1);
+#ifdef GEGE
+
+            h2ggapPAM[alphaCode][protonCode]->Fill(pde1, pde2);
+#endif
+#ifdef CUBEMATRIX
+            h3ggapPAM[alphaCode][protonCode]->Fill(pde1, pde2, pde3);
+#endif
+        }
+        else
+            ifap1 = 0;
+    }
+
+    /*------------- AM ------------*/
+
+    // do apt
+    if (((ioption / 1000) % 10) == 2)
+    {
+
+        if (h1ggaptAM[alphaCode][protonCode][totalCode] != nullptr)
+        {
+            ifapt2 = 2;
+            h1ggaptAM[alphaCode][protonCode][totalCode]->Fill(pde1);
+#ifdef GEGE
+#ifdef GEGEAM
+            h2ggaptAM[alphaCode][protonCode][totalCode]->Fill(pde1, pde2);
+#endif
+#endif
+#ifdef CUBEMATRIX
+#ifdef CUBEMATRIXAM
+            h3ggaptAM[alphaCode][protonCode][totalCode]->Fill(pde1, pde2, pde3);
+#endif
+#endif
+        }
+        else
+            ifapt2 = 0;
+    }
+
+    // do at
+    if (((ioption / 100) % 10) == 2)
+    {
+
+        if (h1ggatAM[alphaCode][totalCode] != nullptr)
+        {
+            ifat2 = 2;
+            h1ggatAM[alphaCode][totalCode]->Fill(pde1);
+#ifdef GEGE
+#ifdef GEGEAM
+            h2ggatAM[alphaCode][totalCode]->Fill(pde1, pde2);
+#endif
+#endif
+#ifdef CUBEMATRIX
+#ifdef CUBEMATRIXAM
+            h3ggatAM[alphaCode][totalCode]->Fill(pde1, pde2, pde3);
+#endif
+#endif
+        }
+        else
+            ifat2 = 0;
+    }
+
+    // do pt
+    if (((ioption / 10) % 10) == 2)
+    {
+
+        if (h1ggptAM[protonCode][totalCode] != nullptr)
+        {
+            ifpt2 = 2;
+            h1ggptAM[protonCode][totalCode]->Fill(pde1);
+#ifdef GEGE
+#ifdef GEGEAM
+            h2ggptAM[protonCode][totalCode]->Fill(pde1, pde2);
+#endif
+#endif
+#ifdef CUBEMATRIX
+#ifdef CUBEMATRIXAM
+            h3ggptAM[protonCode][totalCode]->Fill(pde1, pde2, pde3);
+#endif
+#endif
+        }
+        else
+            ifpt2 = 0;
+    }
+
+    // do ap
+    if (((ioption / 1) % 10) == 2)
+    {
+
+        if (h1ggapAM[alphaCode][protonCode] != nullptr)
+        {
+            ifap2 = 2;
+            h1ggapAM[alphaCode][protonCode]->Fill(pde1);
+#ifdef GEGE
+#ifdef GEGEAM
+            h2ggapAM[alphaCode][protonCode]->Fill(pde1, pde2);
+#endif
+#endif
+#ifdef CUBEMATRIX
+#ifdef CUBEMATRIXAM
+            h3ggapAM[alphaCode][protonCode]->Fill(pde1, pde2, pde3);
+#endif
+#endif
+        }
+        else
+            ifap2 = 0;
+    }
+
+    return (ioption == (((ifapt1 + ifapt2) * 1000) + ((ifat1 + ifat2) * 100) + ((ifpt1 + ifpt2) * 10) + ((ifap1 + ifap2) * 1)));
+}
+
+/**
+ * @brief - Take advantage
+ * @brief 1. sorting time stamp from smallest to largest
+ * @brief 2. The gamma gamma coincident time window is symmetrical
+ * @brief -  one can see it in loop
+ *
+ */
 void YMatrix::Process()
 {
     Init();
+    bool WD1 = (TMath::Abs(GEGEAMWINDOWL1) == TMath::Abs(GEGEAMWINDOWR2));
+    bool WD2 = (TMath::Abs(GEGEAMWINDOWR1) == TMath::Abs(GEGEAMWINDOWL2));
+    bool SYMMETRICAL = WD1 && WD2;
 
+    if (SYMMETRICAL)
+        cout << "The gamma gamma coincident time window is symmetrical" << endl;
+    else
+        cout << "The gamma gamma coincident time window is not symmetrical" << endl;
+
+    short gsecondlp_begining;
+    short gthirdlp_begining;
     for (Long64_t jentry = 0; jentry < ltotalEntry; ++jentry)
     {
         fchain->GetEntry(jentry);
 
         if (jentry % 10000 == 0)
-            printf("\rProcessing: %lld | % lld | %.2f%%", jentry, ltotalEntry, (double)jentry / ltotalEntry * 100);
-
+        {
+            cout << TString::Format("Processing: %lld | % lld | %.2f%%", jentry, ltotalEntry, (double)jentry / ltotalEntry * 100) << endl;
+            cout << "\033[1A\033[K";
+        }
         bfirstLoopHit = true;
         for (short cfirstlp = 0; cfirstlp < hit; cfirstlp++)
         {
-            if (WhatDetector(id[cfirstlp]) != schargedDetectorFlag)
+            if (WhatDetector(id[cfirstlp]) != kschargedDetectorFlag)
                 continue;
-
             // get the begining of charged particle chain
             ltscFirst = GetTs(ts[cfirstlp], sr[cfirstlp]);
             if (bfirstLoopHit)
@@ -777,23 +934,28 @@ void YMatrix::Process()
             // Finding charged partical use candied haws on a stick
             for (short ccecondlp = (cfirstlp + 1); ccecondlp < hit; ccecondlp++)
             {
-                if (WhatDetector(id[ccecondlp]) != schargedDetectorFlag)
+                if (WhatDetector(id[ccecondlp]) != kschargedDetectorFlag)
                     continue;
-
                 ltscSecond = GetTs(ts[ccecondlp], sr[ccecondlp]);
                 if (!TcoinLR(ltscSecond, ltsmax, CSICSICOINWINDOWS))
                     continue;
                 ltsmin = Min(Min(ltscFirst, ltscSecond), ltsmin);
                 ltsmax = Max(Max(ltscFirst, ltscSecond), ltsmax);
                 PtcAdd(alpha[ccecondlp], proton[ccecondlp], total[ccecondlp]);
+
+                cfirstlp = ccecondlp; // TIME STAMP ADVANTAGE
             }
 
             /* fill gamma to histogram*/
-            if (salphaHit > ALPHAPTCMAX || sprotonHit > PROTONPTCMAX || stotalHit > TOTALPTCMAX)
+            if ((ALPHAPTCMIN < salphaHit) && (salphaHit > ALPHAPTCMAX))
+                continue;
+            if ((PROTONPTCMIN < sprotonHit) && (sprotonHit > PROTONPTCMAX))
+                continue;
+            if ((TOTALPTCMIN < stotalHit) && (stotalHit > TOTALPTCMAX))
                 continue;
             for (short gfristlp = 0; gfristlp < hit; gfristlp++)
             {
-                if (WhatDetector(id[gfristlp]) != sGeFlag)
+                if (WhatDetector(id[gfristlp]) != ksGeFlag)
                     continue;
 
                 ltsgFirst = GetTs(ts[gfristlp], sr[gfristlp]);
@@ -802,12 +964,16 @@ void YMatrix::Process()
                 if (!TcoinR(ltsgFirst, ltsmax, GECSICOINWINDOWSR))
                     continue;
 
-                for (short gsecondlp = 0; gsecondlp < hit; gsecondlp++)
+                if (SYMMETRICAL)
+                    gsecondlp_begining = gfristlp + 1;
+                else
+                    gsecondlp_begining = 0;
+                for (short gsecondlp = gsecondlp_begining; gsecondlp < hit; gsecondlp++) // TIME WINDOW SYMMETRICAL
                 {
                     if (gfristlp == gsecondlp)
                         continue;
 
-                    if (WhatDetector(id[gsecondlp]) != sGeFlag)
+                    if (WhatDetector(id[gsecondlp]) != ksGeFlag)
                         continue;
 
                     ltsgSecond = GetTs(ts[gsecondlp], sr[gsecondlp]);
@@ -824,36 +990,53 @@ void YMatrix::Process()
                         bamgFirstgSecond = true;
                     else if (TcoinLR(ltsgFirst, ltsgSecond, GEGEAMWINDOWL2, GEGEAMWINDOWR2))
                         bamgFirstgSecond = true;
-
 #ifndef CUBEMATRIX
                     if (bpamgFirstgSecond)
-                        if (!FillHistogram(dpl[gfristlp], dpl[gsecondlp], salphaHit, sprotonHit, stotalHit, "1111"))
-                            cerr << "can't fill histogram PAM, jentry = " << jentry << endl;
+                    {
+                        if (SYMMETRICAL)
+                        {
+                            if (!FillHistogramSYM(dpl[gfristlp], dpl[gsecondlp], salphaHit, sprotonHit, stotalHit, "1111"))
+                                cerr << "can't fill histogram PAM, jentry = " << jentry << endl;
+                        }
+                        else
+                        {
+                            if (!FillHistogramNOSYM(dpl[gfristlp], dpl[gsecondlp], salphaHit, sprotonHit, stotalHit, "1111"))
+                                cerr << "can't fill histogram PAM, jentry = " << jentry << endl;
+                        }
+                    }
+                    ClearHitgpam();
 #endif
 
-#ifdef GEGE
-#ifdef GEGEAM
 #ifndef CUBEMATRIXAM
-
                     if (bamgFirstgSecond)
-                        if (!FillHistogram(dpl[gfristlp], dpl[gsecondlp], salphaHit, sprotonHit, stotalHit, "2222"))
-                            cerr << "can't fill histogram AM, jentry = " << jentry << endl;
-
-                    if (!FillPM())
-                        cerr << "can't add matrix to AM" << endl;
-#endif
-#endif
+                    {
+                        if (SYMMETRICAL)
+                        {
+                            if (!FillHistogramSYM(dpl[gfristlp], dpl[gsecondlp], salphaHit, sprotonHit, stotalHit, "2222"))
+                                cerr << "can't fill histogram AM, jentry = " << jentry << endl;
+                        }
+                        else
+                        {
+                            if (!FillHistogramNOSYM(dpl[gfristlp], dpl[gsecondlp], salphaHit, sprotonHit, stotalHit, "2222"))
+                                cerr << "can't fill histogram AM, jentry = " << jentry << endl;
+                        }
+                    }
+                    ClearHitgam();
 #endif
 
 #ifdef CUBEMATRIX
-                    for (short gthirdlp = 0; gthirdlp < hit; gthirdlp++)
+                    if (SYMMETRICAL)
+                        gthirdlp_begining = gsecondlp + 1;
+                    else
+                        gthirdlp_begining = 0;
+
+                    for (short gthirdlp = gthirdlp_begining; gthirdlp < hit; gthirdlp++)
                     {
                         if (gsecondlp == gthirdlp || gfristlp == gthirdlp) // had judge gfristlp == gsecondlp in second loop of gamma
                             continue;
 
-                        if (WhatDetector(ts[gthirdlp]) != sGeFlag)
+                        if (WhatDetector(id[gthirdlp]) != ksGeFlag)
                             continue;
-
                         ltsgThird = GetTs(ts[gthirdlp], sr[gthirdlp]);
                         if (!TcoinL(ltsgThird, ltsmin, GECSICOINWINDOWSL))
                             continue;
@@ -864,10 +1047,20 @@ void YMatrix::Process()
                             bpamgFirstgThird = true;
                         if (TcoinLR(ltsgSecond, ltsgThird, GEGECOINWINDOWS))
                             bpamgSecondgThird = true;
-
                         if (bpamgFirstgSecond && bpamgFirstgThird && bpamgSecondgThird) // had judge bpamgFirstgSecond in second loop of gamma
-                            if (!FillHistogram(dpl[gfristlp], dpl[gsecondlp], salphaHit, sprotonHit, stotalHit, "1111", dpl[gthirdlp]))
-                                cerr << "can't fill histogram PAM, jentry = " << jentry << endl;
+                        {
+                            if (SYMMETRICAL)
+                            {
+                                if (!FillHistogramSYM(dpl[gfristlp], dpl[gsecondlp], salphaHit, sprotonHit, stotalHit, "1111", dpl[gthirdlp]))
+                                    cerr << "can't fill histogram PAM, jentry = " << jentry << endl;
+                            }
+                            else
+                            {
+                                if (!FillHistogramNOSYM(dpl[gfristlp], dpl[gsecondlp], salphaHit, sprotonHit, stotalHit, "1111", dpl[gthirdlp]))
+                                    cerr << "can't fill histogram PAM, jentry = " << jentry << endl;
+                            }
+                        }
+                        ClearHitgpam();
 #ifdef CUBEMATRIXAM
                         if (TcoinLR(ltsgFirst, ltsgThird, GEGEAMWINDOWL1, GEGEAMWINDOWR1))
                             bamgFirstgThird = true;
@@ -880,10 +1073,19 @@ void YMatrix::Process()
                             bamgSecondgThird = true;
 
                         if (bamgFirstgSecond && bamgFirstgThird && bamgSecondgThird)
-                            if (!FillHistogram(dpl[gfristlp], dpl[gsecondlp], salphaHit, sprotonHit, stotalHit, "2222", dpl[gthirdlp]))
-                                cerr << "can't fill histogram AM, jentry = " << jentry << endl;
-                        if (!FillPM())
-                            cerr << "can't add matrix to AM" << endl;
+                        {
+                            if (SYMMETRICAL)
+                            {
+                                if (!FillHistogramSYM(dpl[gfristlp], dpl[gsecondlp], salphaHit, sprotonHit, stotalHit, "2222", dpl[gthirdlp]))
+                                    cerr << "can't fill histogram PAM, jentry = " << jentry << endl;
+                            }
+                            else
+                            {
+                                if (!FillHistogramNOSYM(dpl[gfristlp], dpl[gsecondlp], salphaHit, sprotonHit, stotalHit, "2222", dpl[gthirdlp]))
+                                    cerr << "can't fill histogram PAM, jentry = " << jentry << endl;
+                            }
+                        }
+                        ClearHitgam();
 #endif
                     }
 #endif
@@ -891,11 +1093,15 @@ void YMatrix::Process()
             }
         }
     }
+
     cout << endl;
+    cout << "GET PM!" << endl;
+    if (!FillPM())
+        cerr << "can't add matrix to PM" << endl;
     if (StoreFile())
         cout << "Finish!" << endl;
     else
-        cout << "failed" << endl;
+        cout << "Fail!" << endl;
     if (fopf != nullptr)
         fopf->Close();
 }
@@ -908,59 +1114,148 @@ void YMatrix::Process()
  */
 bool YMatrix::FillPM()
 {
+
     double dPAMT = GEGECOINWINDOWS * 2.;
     double dAMT = TMath::Abs(GEGEAMWINDOWR1 - GEGEAMWINDOWL1) + TMath::Abs(GEGEAMWINDOWR2 - GEGEAMWINDOWL2);
     double dweight = -dPAMT / dAMT;
     int icount = 0;
-    for (short i = 0; i < (ALPHAPTCMAX + 1); i++)
-        for (short j = 0; j < (PROTONPTCMAX + 1); j++)
-            for (short k = 0; k < (TOTALPTCMAX + 1); k++)
+    int icountTotal = ((ALPHAPTCMAX - ALPHAPTCMIN + 1) * (PROTONPTCMAX - PROTONPTCMIN + 1) * (TOTALPTCMAX - TOTALPTCMIN + 1));
+
+    bool getaptPM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    bool getatPM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    bool getptPM[(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    bool getapPM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)];
+
+    for (short i = 0; i < (ALPHAPTCMAX - ALPHAPTCMIN + 1); i++)
+        for (short j = 0; j < (PROTONPTCMAX - PROTONPTCMIN + 1); j++)
+            for (short k = 0; k < (TOTALPTCMAX - TOTALPTCMIN + 1); k++)
             {
-                icount++;
+                getaptPM[i][j][k] = false;
+                getatPM[i][k] = false;
+                getptPM[j][k] = false;
+                getapPM[i][j] = false;
+            }
+
+    for (short i = 0; i < (ALPHAPTCMAX - ALPHAPTCMIN + 1); i++)
+        for (short j = 0; j < (PROTONPTCMAX - PROTONPTCMIN + 1); j++)
+            for (short k = 0; k < (TOTALPTCMAX - TOTALPTCMIN + 1); k++)
+            {
+                printf("\r GET PM process: %d | %d", icount, icountTotal);
+                if (!getaptPM[i][j][k])
+                {
+                    getaptPM[i][j][k] = true;
+                    h1ggaptPM[i][j][k]->Add(h1ggaptPAM[i][j][k], h1ggaptAM[i][j][k], 1, dweight);
+
 #ifdef GEGE
 #ifdef GEGEAM
-                h1ggaptPM[i][j][k]->Add(h1ggaptPAM[i][j][k], h1ggaptAM[i][j][k], 1, dweight);
-                h1ggatPM[i][k]->Add(h1ggatPAM[i][k], h1ggatAM[i][k], 1, dweight);
-                h1ggptPM[j][k]->Add(h1ggptPAM[j][k], h1ggptAM[j][k], 1, dweight);
-                h1ggapPM[i][j]->Add(h1ggapPAM[i][j], h1ggapAM[i][j], 1, dweight);
-
-                h2ggaptPM[i][j][k]->Add(h2ggaptPAM[i][j][k], h2ggaptAM[i][j][k], 1, dweight);
-                h2ggatPM[i][k]->Add(h2ggatPAM[i][k], h2ggatAM[i][k], 1, dweight);
-                h2ggptPM[j][k]->Add(h2ggptPAM[j][k], h2ggptAM[j][k], 1, dweight);
-                h2ggapPM[i][j]->Add(h2ggapPAM[i][j], h2ggapAM[i][j], 1, dweight);
+                    h2ggaptPM[i][j][k]->Add(h2ggaptPAM[i][j][k], h2ggaptAM[i][j][k], 1, dweight);
 #endif
 #endif
 
 #ifdef CUBEMATRIX
 #ifdef CUBEMATRIXAM
-                h3ggaptPM[i][j][k]->Add(h3ggaptPAM[i][j][k], h3ggaptAM[i][j][k], 1, dweight);
-                h3ggatPM[i][k]->Add(h3ggatPAM[i][k], h3ggatAM[i][k], 1, dweight);
-                h3ggptPM[j][k]->Add(h3ggptPAM[j][k], h3ggptAM[j][k], 1, dweight);
-                h3ggapPM[i][j]->Add(h3ggapPAM[i][j], h3ggapAM[i][j], 1, dweight);
+                    h3ggaptPM[i][j][k]->Add(h3ggaptPAM[i][j][k], h3ggaptAM[i][j][k], 1, dweight);
 #endif
 #endif
-            }
+                }
+                if (!getatPM[i][k])
+                {
+                    getatPM[i][k] = true;
+                    h1ggatPM[i][k]->Add(h1ggatPAM[i][k], h1ggatAM[i][k], 1, dweight);
 
-    return (icount == ((ALPHAPTCMAX + 1) * (PROTONPTCMAX + 1) * (TOTALPTCMAX + 1)));
+#ifdef GEGE
+#ifdef GEGEAM
+                    h2ggatPM[i][k]->Add(h2ggatPAM[i][k], h2ggatAM[i][k], 1, dweight);
+#endif
+#endif
+
+#ifdef CUBEMATRIX
+#ifdef CUBEMATRIXAM
+                    h3ggatPM[i][k]->Add(h3ggatPAM[i][k], h3ggatAM[i][k], 1, dweight);
+#endif
+#endif
+                }
+                if (!getptPM[j][k])
+                {
+                    getptPM[j][k] = true;
+                    h1ggptPM[j][k]->Add(h1ggptPAM[j][k], h1ggptAM[j][k], 1, dweight);
+
+#ifdef GEGE
+#ifdef GEGEAM
+                    h2ggptPM[j][k]->Add(h2ggptPAM[j][k], h2ggptAM[j][k], 1, dweight);
+#endif
+#endif
+
+#ifdef CUBEMATRIX
+#ifdef CUBEMATRIXAM
+                    h3ggptPM[j][k]->Add(h3ggptPAM[j][k], h3ggptAM[j][k], 1, dweight);
+#endif
+#endif
+                }
+                if (!getapPM[i][j])
+                {
+                    getapPM[i][j] = true;
+
+                    h1ggapPM[i][j]->Add(h1ggapPAM[i][j], h1ggapAM[i][j], 1, dweight);
+
+#ifdef GEGE
+#ifdef GEGEAM
+                    h2ggapPM[i][j]->Add(h2ggapPAM[i][j], h2ggapAM[i][j], 1, dweight);
+#endif
+#endif
+
+#ifdef CUBEMATRIX
+#ifdef CUBEMATRIXAM
+                    h3ggptPM[j][k]->Add(h3ggptPAM[j][k], h3ggptAM[j][k], 1, dweight);
+                    h3ggapPM[i][j]->Add(h3ggapPAM[i][j], h3ggapAM[i][j], 1, dweight);
+#endif
+#endif
+                }
+                icount++;
+            }
+    cout << endl;
+    return (icount == icountTotal);
 }
 
 bool YMatrix::StoreFile()
 {
     if (fopf == nullptr)
         return false;
-    for (short i = 0; i < (ALPHAPTCMAX + 1); i++)
-        for (short j = 0; j < (PROTONPTCMAX + 1); j++)
-            for (short k = 0; k < (TOTALPTCMAX + 1); k++)
+    for (short i = 0; i < (ALPHAPTCMAX - ALPHAPTCMIN + 1); i++)
+        for (short j = 0; j < (PROTONPTCMAX - PROTONPTCMIN + 1); j++)
+            for (short k = 0; k < (TOTALPTCMAX - TOTALPTCMIN + 1); k++)
             {
                 StoreHistogram(h1ggaptPAM[i][j][k], "PAM/TH1/AlphaProtonTotal");
                 StoreHistogram(h1ggatPAM[i][k], "PAM/TH1/AlphaTotal");
                 StoreHistogram(h1ggptPAM[j][k], "PAM/TH1/ProtonTotal");
                 StoreHistogram(h1ggapPAM[i][j], "PAM/TH1/AlphaProton");
+
+                StoreHistogram(h1ggaptAM[i][j][k], "AM/TH1/AlphaProtonTotal");
+                StoreHistogram(h1ggatAM[i][k], "AM/TH1/AlphaTotal");
+                StoreHistogram(h1ggptAM[j][k], "AM/TH1/ProtonTotal");
+                StoreHistogram(h1ggapAM[i][j], "AM/TH1/AlphaProton");
+
+                StoreHistogram(h1ggaptPM[i][j][k], "PM/TH1/AlphaProtonTotal");
+                StoreHistogram(h1ggatPM[i][k], "PM/TH1/AlphaTotal");
+                StoreHistogram(h1ggptPM[j][k], "PM/TH1/ProtonTotal");
+                StoreHistogram(h1ggapPM[i][j], "PM/TH1/AlphaProton");
+
 #ifdef GEGE
                 StoreHistogram(h2ggaptPAM[i][j][k], "PAM/TH2/AlphaProtonTotal");
                 StoreHistogram(h2ggatPAM[i][k], "PAM/TH2/AlphaTotal");
                 StoreHistogram(h2ggptPAM[j][k], "PAM/TH2/ProtonTotal");
                 StoreHistogram(h2ggapPAM[i][j], "PAM/TH2/AlphaProton");
+#ifdef GEGEAM
+                StoreHistogram(h2ggaptAM[i][j][k], "AM/TH2/AlphaProtonTotal");
+                StoreHistogram(h2ggatAM[i][k], "AM/TH2/AlphaTotal");
+                StoreHistogram(h2ggptAM[j][k], "AM/TH2/ProtonTotal");
+                StoreHistogram(h2ggapAM[i][j], "AM/TH2/AlphaProton");
+
+                StoreHistogram(h2ggaptPM[i][j][k], "PM/TH2/AlphaProtonTotal");
+                StoreHistogram(h2ggatPM[i][k], "PM/TH2/AlphaTotal");
+                StoreHistogram(h2ggptPM[j][k], "PM/TH2/ProtonTotal");
+                StoreHistogram(h2ggapPM[i][j], "PM/TH2/AlphaProton");
+#endif
 #endif
 
 #ifdef CUBEMATRIX
@@ -968,7 +1263,6 @@ bool YMatrix::StoreFile()
                 StoreHistogram(h3ggatPAM[i][k], "PAM/TH3/AlphaTotal");
                 StoreHistogram(h3ggptPAM[j][k], "PAM/TH3/ProtonTotal");
                 StoreHistogram(h3ggapPAM[i][j], "PAM/TH3/AlphaProton");
-
 #ifdef CUBEMATRIXAM
                 StoreHistogram(h3ggaptAM[i][j][k], "AM/TH3/AlphaProtonTotal");
                 StoreHistogram(h3ggatAM[i][k], "AM/TH3/AlphaTotal");
@@ -979,29 +1273,6 @@ bool YMatrix::StoreFile()
                 StoreHistogram(h3ggatPM[i][k], "PM/TH3/AlphaTotal");
                 StoreHistogram(h3ggptPM[j][k], "PM/TH3/ProtonTotal");
                 StoreHistogram(h3ggapPM[i][j], "PM/TH3/AlphaProton");
-#endif
-#endif
-#ifdef GEGE
-#ifdef GEGEAM
-                StoreHistogram(h1ggaptAM[i][j][k], "AM/TH1/AlphaProtonTotal");
-                StoreHistogram(h1ggatAM[i][k], "AM/TH1/AlphaTotal");
-                StoreHistogram(h1ggptAM[j][k], "AM/TH1/ProtonTotal");
-                StoreHistogram(h1ggapAM[i][j], "AM/TH1/AlphaProton");
-
-                StoreHistogram(h2ggaptAM[i][j][k], "AM/TH2/AlphaProtonTotal");
-                StoreHistogram(h2ggatAM[i][k], "AM/TH2/AlphaTotal");
-                StoreHistogram(h2ggptAM[j][k], "AM/TH2/ProtonTotal");
-                StoreHistogram(h2ggapAM[i][j], "AM/TH2/AlphaProton");
-
-                StoreHistogram(h1ggaptPM[i][j][k], "PM/TH1/AlphaProtonTotal");
-                StoreHistogram(h1ggatPM[i][k], "PM/TH1/AlphaTotal");
-                StoreHistogram(h1ggptPM[j][k], "PM/TH1/ProtonTotal");
-                StoreHistogram(h1ggapPM[i][j], "PM/TH1/AlphaProton");
-
-                StoreHistogram(h2ggaptPM[i][j][k], "PM/TH2/AlphaProtonTotal");
-                StoreHistogram(h2ggatPM[i][k], "PM/TH2/AlphaTotal");
-                StoreHistogram(h2ggptPM[j][k], "PM/TH2/ProtonTotal");
-                StoreHistogram(h2ggapPM[i][j], "PM/TH2/AlphaProton");
 #endif
 #endif
             }
@@ -1017,11 +1288,27 @@ inline void YMatrix::ClearHitVar()
     salphaHit = 0;
     sprotonHit = 0;
     stotalHit = 0;
+
     bpamgFirstgSecond = false;
-    bamgFirstgSecond = false;
     bpamgFirstgThird = false;
-    bamgFirstgThird = false;
     bpamgSecondgThird = false;
+
+    bamgFirstgSecond = false;
+    bamgFirstgThird = false;
+    bamgSecondgThird = false;
+}
+
+inline void YMatrix::ClearHitgpam()
+{
+    bpamgFirstgSecond = false;
+    bpamgFirstgThird = false;
+    bpamgSecondgThird = false;
+}
+
+inline void YMatrix::ClearHitgam()
+{
+    bamgFirstgSecond = false;
+    bamgFirstgThird = false;
     bamgSecondgThird = false;
 }
 
@@ -1038,6 +1325,51 @@ inline void YMatrix::PtcAdd(const short &pa, const short &pp, const short &pt)
     salphaHit += pa;
     sprotonHit += pp;
     stotalHit += pt;
+}
+
+/**
+ * @brief - This function is intended to fill one gamma to TH1, TH2 or TH3
+ * @brief - overloaded three YTH1, YTH2, and YTH3
+ * @param ph - pointer variable, addree of histogram
+ * @param psdir - Histogram is stored to this path
+ */
+inline void YMatrix::StoreHistogram(YTH1 *&ph, const TString &psdir)
+{
+
+    if (ph != nullptr)
+        if (ph->GetEntries() > LEASTENTRY)
+        {
+            fopf->cd(psdir.Data());
+            ph->Write();
+            delete ph;
+            ph = nullptr;
+        }
+}
+
+inline void YMatrix::StoreHistogram(YTH2 *&ph, const TString &psdir)
+{
+
+    if (ph != nullptr)
+        if (ph->GetEntries() > LEASTENTRY)
+        {
+            fopf->cd(psdir.Data());
+            ph->Write();
+            delete ph;
+            ph = nullptr;
+        }
+}
+
+inline void YMatrix::StoreHistogram(YTH3 *&ph, const TString &psdir)
+{
+
+    if (ph != nullptr)
+        if (ph->GetEntries() > LEASTENTRY)
+        {
+            fopf->cd(psdir.Data());
+            ph->Write();
+            delete ph;
+            ph = nullptr;
+        }
 }
 
 /**
@@ -1138,13 +1470,13 @@ inline Long64_t YMatrix::Min(const Long64_t &pltsi, const Long64_t &pltsj)
  * @brief - id -=> germaniun : 1 - 36; LaBr_3 : 37 - 46; charged particle detector : 0
  * @brief - det -=> CsI + APD : 1 - 96; other : 97 - 125 (have null series number); gamma detector : 0
  * @param psid id number
- * @return -  charged particle detector -=> schargedDetectorFlag
- * @return -  germanium detector (HPGe and CLOVER) -=> sGeFlag
- * @return -  LaBr_3 -=> sLaBrFlag
+ * @return -  charged particle detector -=> kschargedDetectorFlag
+ * @return -  germanium detector (HPGe and CLOVER) -=> ksGeFlag
+ * @return -  LaBr_3 -=> ksLaBrFlag
  */
 inline short YMatrix::WhatDetector(const short &psid)
 {
-    return (psid > 0 ? (psid < 37 ? sGeFlag : sLaBrFlag) : schargedDetectorFlag);
+    return (psid > 0 ? (psid < 37 ? ksGeFlag : ksLaBrFlag) : kschargedDetectorFlag);
 }
 
 /**

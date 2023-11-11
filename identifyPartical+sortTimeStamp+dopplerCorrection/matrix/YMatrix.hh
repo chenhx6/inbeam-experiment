@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-11-07 01:42:15
- * @LastEditTime: 2023-11-09 10:26:40
+ * @LastEditTime: 2023-11-11 13:15:39
  */
 #ifndef _YMATRIX_H_
 #define _YMATRIX_H_
@@ -34,9 +34,9 @@ private:
     typedef TH3I YTH3;
 
     /*common variable*/
-    const short schargedDetectorFlag;
-    const short sGeFlag;
-    const short sLaBrFlag;
+    const short kschargedDetectorFlag;
+    const short ksGeFlag;
+    const short ksLaBrFlag;
     int irunBegin;
     int irunEnd;
     Long64_t ltscFirst, ltscSecond;
@@ -53,56 +53,54 @@ private:
     TFile *fopf;
     Long64_t ltotalEntry;
 
-    YTH1 *h1ggaptPAM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH1 *h1ggatPAM[(ALPHAPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH1 *h1ggptPAM[(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH1 *h1ggapPAM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)];
+    YTH1 *h1ggaptPAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH1 *h1ggatPAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH1 *h1ggptPAM[(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH1 *h1ggapPAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)];
+
+    YTH1 *h1ggaptAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH1 *h1ggatAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH1 *h1ggptAM[(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH1 *h1ggapAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)];
+
+    YTH1 *h1ggaptPM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH1 *h1ggatPM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH1 *h1ggptPM[(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH1 *h1ggapPM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)];
 
 #ifdef GEGE
-    YTH2 *h2ggaptPAM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH2 *h2ggatPAM[(ALPHAPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH2 *h2ggptPAM[(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH2 *h2ggapPAM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)];
-
+    YTH2 *h2ggaptPAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH2 *h2ggatPAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH2 *h2ggptPAM[(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH2 *h2ggapPAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)];
 #ifdef GEGEAM
-    YTH1 *h1ggaptAM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH1 *h1ggatAM[(ALPHAPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH1 *h1ggptAM[(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH1 *h1ggapAM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)];
+    YTH2 *h2ggaptAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH2 *h2ggatAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH2 *h2ggptAM[(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH2 *h2ggapAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)];
 
-    YTH2 *h2ggaptAM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH2 *h2ggatAM[(ALPHAPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH2 *h2ggptAM[(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH2 *h2ggapAM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)];
-
-    YTH1 *h1ggaptPM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH1 *h1ggatPM[(ALPHAPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH1 *h1ggptPM[(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH1 *h1ggapPM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)];
-
-    YTH2 *h2ggaptPM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH2 *h2ggatPM[(ALPHAPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH2 *h2ggptPM[(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH2 *h2ggapPM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)];
+    YTH2 *h2ggaptPM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH2 *h2ggatPM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH2 *h2ggptPM[(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH2 *h2ggapPM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)];
 #endif
 #endif
 
 #ifdef CUBEMATRIX
-    YTH3 *h3ggaptPAM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH3 *h3ggatPAM[(ALPHAPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH3 *h3ggptPAM[(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH3 *h3ggapPAM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)];
-
+    YTH3 *h3ggaptPAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH3 *h3ggatPAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH3 *h3ggptPAM[(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH3 *h3ggapPAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)];
 #ifdef CUBEMATRIXAM
-    YTH3 *h3ggaptAM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH3 *h3ggatAM[(ALPHAPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH3 *h3ggptAM[(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH3 *h3ggapAM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)];
+    YTH3 *h3ggaptAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH3 *h3ggatAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH3 *h3ggptAM[(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH3 *h3ggapAM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)];
 
-    YTH3 *h3ggaptPM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH3 *h3ggatPM[(ALPHAPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH3 *h3ggptPM[(PROTONPTCMAX + 1)][(TOTALPTCMAX + 1)];
-    YTH3 *h3ggapPM[(ALPHAPTCMAX + 1)][(PROTONPTCMAX + 1)];
+    YTH3 *h3ggaptPM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH3 *h3ggatPM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH3 *h3ggptPM[(PROTONPTCMAX - PROTONPTCMIN + 1)][(TOTALPTCMAX - TOTALPTCMIN + 1)];
+    YTH3 *h3ggapPM[(ALPHAPTCMAX - ALPHAPTCMIN + 1)][(PROTONPTCMAX - PROTONPTCMIN + 1)];
 #endif
 #endif
 
@@ -145,8 +143,8 @@ private:
     // template <typename Thn> // 无法使用？
     // Thn *CreateHistogram(const TString pshname);
 
-    template <typename Thn>
-    bool StoreHistogram(Thn *&ph, const TString &psdir);
+    // template <typename Thn> // 模板不会使用
+    // bool StoreHistogram(Thn *&ph, const TString &psdir);
 
     void Init();
     bool FileExist(const TString &pschain_file_name);
@@ -157,8 +155,8 @@ private:
     bool CreateHistogram(YTH1 *&phistogram, const TString &pshname);
     bool CreateHistogram(YTH2 *&phistogram, const TString &pshname);
     bool CreateHistogram(YTH3 *&phistogram, const TString &pshname);
-
-    bool FillHistogram(const double &pde1, const double &pde2, const short &pa, const short &pp, const short &pt, const TString &psoption, const double &pde3 = 0.0);
+    bool FillHistogramSYM(const double &pde1, const double &pde2, const short &pa, const short &pp, const short &pt, const TString &psoption, const double &pde3 = 0.0);
+    bool FillHistogramNOSYM(const double &pde1, const double &pde2, const short &pa, const short &pp, const short &pt, const TString &psoption, const double &pde3 = 0.0);
     bool FillPM();
     bool StoreFile();
 
@@ -172,8 +170,12 @@ private:
     inline short WhatDetector(const short &psid);
     inline bool HistogramExist(const TString &pshname);
     inline void ClearHitVar();
+    inline void ClearHitgpam();
+    inline void ClearHitgam();
     inline void PtcAdd(const short &pa, const short &pp, const short &pt);
-
+    inline void StoreHistogram(YTH1 *&ph, const TString &psdir);
+    inline void StoreHistogram(YTH2 *&ph, const TString &psdir);
+    inline void StoreHistogram(YTH3 *&ph, const TString &psdir);
     /*function*/
 
 public:
@@ -219,22 +221,22 @@ public:
  * @return - true write successfully
  * @return - false write failed
  */
-template <typename Thn>
-bool YMatrix::StoreHistogram(Thn *&ph, const TString &psdir)
-{
-    fopf->cd(psdir.Data());
-    if (ph != nullptr)
-        if (ph->GetEntries() > LEASTENTRY)
-        {
-            ph->Write();
-            delete ph;
-            ph == nullptr;
-            return true;
-        }
-        else
-            return false;
-    else
-        return false;
-}
+// template <typename Thn>
+// bool YMatrix::StoreHistogram(Thn *&ph, const TString &psdir)
+// {
+//     fopf->cd(psdir.Data());
+//     if (ph != nullptr)
+//         if (ph->GetEntries() > LEASTENTRY)
+//         {
+//             ph->Write();
+//             delete ph;
+//             ph == nullptr;
+//             return true;
+//         }
+//         else
+//             return false;
+//     else
+//         return false;
+// }
 
 #endif
