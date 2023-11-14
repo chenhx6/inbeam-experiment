@@ -48,7 +48,7 @@ entry=0x6f7df0, pde1=
 entry=0x6f7df0) at YMatrix.cc:1086
 #9  0x00000000004021f5 in main (argc=<optimized out>, argv=<optimized out>) at main.cc:33
 ```
-## 单谱是必须做出的
+## 二维矩阵投影谱是必须做出的
 ## 源文件为HIT文件输出的dpl修正后的文件
 > 注意点
 > 1. 探测器的id编号在函数已经写死
