@@ -397,8 +397,8 @@ void YMatrix::CreateHistogram()
 /**
  * @brief - overloaded funtion YTH1, YTH2, or YTH3
  * @brief - This function is aimed to create one histogram
- * @brief -  * -=> using to have address varibale, don't change the address
- * @brief - *& -=> using to nullptr, change the pointor address
+ * @brief -  * -=> don't change the address
+ * @brief - *& -=> change the pointor address
  * @param ph1 the pointer of histogram, getting the class name only
  * @param pshname  histogram named h1 + hname or h2 + hname or h3 + hname (There is no "+" in the histogram name)
  * @return - true crate
