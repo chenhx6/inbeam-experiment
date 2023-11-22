@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-11-07 01:42:15
- * @LastEditTime: 2023-11-21 21:06:09
+ * @LastEditTime: 2023-11-22 14:15:09
  */
 #include "YMatrix.hh"
 
@@ -409,6 +409,8 @@ bool YMatrix::CreateHistogram(YTH1 *phistogram, const TString &pshname)
     phistogram = new YTH1(("h1" + pshname).Data(), (pshname + "_projection").Data(), EBINNUMBER, EMIN, EMAX);
     if (phistogram != nullptr)
     {
+        cout << "Create h1: " << phistogram << "\t" << phistogram->GetName() << endl;
+        phistogram->Fill(0.0);
         return true;
     }
     else
@@ -422,6 +424,8 @@ bool YMatrix::CreateHistogram(YTH2 *phistogram, const TString &pshname)
     phistogram = new YTH2(("h2" + pshname).Data(), (pshname + "_2matrix").Data(), EBINNUMBER, EMIN, EMAX, EBINNUMBER, EMIN, EMAX);
     if (phistogram != nullptr)
     {
+        cout << "Create h2: " << phistogram << "\t" << phistogram->GetName() << endl;
+        phistogram->Fill(0.0, 0.0);
         return true;
     }
     else
@@ -435,6 +439,8 @@ bool YMatrix::CreateHistogram(YTH3 *phistogram, const TString &pshname)
     phistogram = new YTH3(("h3" + pshname).Data(), (pshname + "_3matrix").Data(), EBINNUMBER, EMIN, EMAX, EBINNUMBER, EMIN, EMAX, EBINNUMBER, EMIN, EMAX);
     if (phistogram != nullptr)
     {
+        cout << "Create h3: " << phistogram << "\t" << phistogram->GetName() << endl;
+        phistogram->Fill(0.0, 0.0, 0.0);
         return true;
     }
     else
@@ -516,15 +522,15 @@ bool YMatrix::FillHistogram(const bool &pbsym, const double &pde1, const double 
     int ioption = psoption.Atoi();
     int ifapt1 = 0, ifat1 = 0, ifpt1 = 0, ifap1 = 0;
     int ifapt2 = 0, ifat2 = 0, ifpt2 = 0, ifap2 = 0;
-    // cout << pa << "\t" << pp << "\t" << pt << endl;
-    // cout << pde1 << "\t" << pde2 << "\t" << pde3 << endl;
+    cout << pa << "\t" << pp << "\t" << pt << endl;
+    cout << pde1 << "\t" << pde2 << "\t" << pde3 << endl;
 
     shggaptname = TString::Format("alpha%hd_proton%hd_total%hd", pa, pp, pt);
     shggatname = TString::Format("alpha%hd_total%hd", pa, pt);
     shggptname = TString::Format("proton%hd_total%hd", pp, pt);
     shggapname = TString::Format("alpha%hd_proton%hd", pa, pp);
     /*------------- PAM ------------*/
-    // cout << shggaptname << "\t" << shggatname << "\t" << shggptname << "\t" << shggapname << endl;
+    cout << shggaptname << "\t" << shggatname << "\t" << shggptname << "\t" << shggapname << endl;
     // do apt
     if (((ioption / 1000) % 10) == 1)
     {
@@ -532,12 +538,12 @@ bool YMatrix::FillHistogram(const bool &pbsym, const double &pde1, const double 
         {
             ifapt1 = 1;
             h1ggaptPAM->Fill(pde1);
-            // cout << pa << "1\t" << pp << "\t" << pt << endl;
+            cout << pa << "1\t" << pp << "\t" << pt << endl;
 
             if (pbsym)
                 h1ggaptPAM->Fill(pde2);
 #ifdef GEGE
-            // cout << pa << "2\t" << pp << "\t" << pt << endl;
+            cout << pa << "2\t" << pp << "\t" << pt << endl;
 
             FindHistogram(h2ggaptPAM, (shggaptname + "PAM"));
             h2ggaptPAM->Fill(pde1, pde2);
@@ -546,37 +552,50 @@ bool YMatrix::FillHistogram(const bool &pbsym, const double &pde1, const double 
                 h2ggaptPAM->Fill(pde2, pde1);
 #endif
 #ifdef CUBEMATRIX
-            // cout << pa << "3\t" << pp << "\t" << pt << endl;
-
+            cout << pa << "3\t" << pp << "\t" << pt << endl;
             FindHistogram(h3ggaptPAM, (shggaptname + "PAM"));
+            cout << pa << "3\t" << pp << "\t" << pt << endl;
+            cout << h3ggaptPAM << "\t" << h3ggaptPAM->GetName() << endl;
             h3ggaptPAM->Fill(pde1, pde2, pde3);
-            // cout << pa << "3_\t" << pp << "\t" << pt << endl;
 
+            cout << pa << "3_\t" << pp << "\t" << pt << endl;
             if (pbsym)
             {
+                cout << pa << "3_\t" << pp << "\t" << pt << endl;
                 h3ggaptPAM->Fill(pde1, pde3, pde2);
+                cout << pa << "3_\t" << pp << "\t" << pt << endl;
+
                 h3ggaptPAM->Fill(pde2, pde1, pde3);
+                cout << pa << "3_\t" << pp << "\t" << pt << endl;
+
                 h3ggaptPAM->Fill(pde2, pde3, pde1);
                 h3ggaptPAM->Fill(pde3, pde1, pde2);
                 h3ggaptPAM->Fill(pde3, pde2, pde1);
+                cout << pa << "3_\t" << pp << "\t" << pt << endl;
             }
 #endif
         }
         else
             ifapt1 = 0;
     }
+    cout << pa << "1\t" << pp << "\t" << pt << endl;
 
     // do at
     if (((ioption / 100) % 10) == 1)
     {
+        cout << pa << "1\t" << pp << "\t" << pt << endl;
+
         if (FindHistogram(h1ggatPAM, (shggatname + "PAM")))
         {
             ifat1 = 1;
             h1ggatPAM->Fill(pde1);
+            cout << pa << "1\t" << pp << "\t" << pt << endl;
 
             if (pbsym)
                 h1ggatPAM->Fill(pde2);
 #ifdef GEGE
+            cout << pa << "2\t" << pp << "\t" << pt << endl;
+
             FindHistogram(h2ggatPAM, (shggatname + "PAM"));
             h2ggatPAM->Fill(pde1, pde2);
 
@@ -585,8 +604,11 @@ bool YMatrix::FillHistogram(const bool &pbsym, const double &pde1, const double 
 #endif
 
 #ifdef CUBEMATRIX
+            cout << pa << "3\t" << pp << "\t" << pt << endl;
+
             FindHistogram(h3ggatPAM, (shggatname + "PAM"));
             h3ggatPAM->Fill(pde1, pde2, pde3);
+            cout << pa << "3_\t" << pp << "\t" << pt << endl;
 
             if (pbsym)
             {

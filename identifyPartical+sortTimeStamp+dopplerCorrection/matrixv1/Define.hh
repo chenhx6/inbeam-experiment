@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-11-07 01:43:26
- * @LastEditTime: 2023-11-21 21:54:47
+ * @LastEditTime: 2023-11-21 22:00:33
  */
 #ifndef _DEFINE_H_
 #define _DEFINE_H_
@@ -52,8 +52,8 @@
 #define GEGEAM // switch, if you want to use it, you must open GEGE
 
 /*three dimension*/
-// #define CUBEMATRIX
-#define CUBEMATRIXAM // switch, minus AM of cube matrix, if you want to use it, you must open CUBEMATRIX
+#define CUBEMATRIX
+// #define CUBEMATRIXAM // switch, minus AM of cube matrix, if you want to use it, you must open CUBEMATRIX
 /*three-foder*/
 
 #define GEGEAMWINDOWL1 -150

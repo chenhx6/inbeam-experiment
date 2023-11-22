@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-11-07 01:42:15
- * @LastEditTime: 2023-11-21 20:27:02
+ * @LastEditTime: 2023-11-22 14:05:41
  */
 #ifndef _YMATRIX_H_
 #define _YMATRIX_H_
@@ -33,7 +33,7 @@ class YMatrix
 private:
     typedef TH1F YTH1;
     typedef TH2F YTH2;
-    typedef TH3F YTH3;
+    typedef TH3I YTH3;
     int th3count;
     /*common variable*/
     const short kschargedDetectorFlag;
