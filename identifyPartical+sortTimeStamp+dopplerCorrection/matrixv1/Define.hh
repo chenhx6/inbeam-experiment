@@ -15,7 +15,7 @@
  */
 /* RAW FILE*/
 #define FILESIZEMIN 100 // MB
-#define RAWFILEPATH "/mnt/g/GC_event/"
+#define RAWFILEPATH "./"
 #define RAWFILENAME "event_hit"
 #define DOPPLERFILE "_doppler"
 #define ADDBACKFILE "_addback"
