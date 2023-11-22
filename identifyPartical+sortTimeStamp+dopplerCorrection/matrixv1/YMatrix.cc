@@ -477,7 +477,7 @@ bool YMatrix::FindHistogram(YTH2 *&ph, const TString &pshname)
 
 bool YMatrix::FindHistogram(YTH3 *&ph, const TString &pshname)
 {
-    ph = (YTH3 *)gROOT->FindObjectAny(("h2" + pshname).Data());
+    ph = (YTH3 *)gROOT->FindObjectAny(("h3" + pshname).Data());
     if (ph != nullptr)
         return true;
     else
