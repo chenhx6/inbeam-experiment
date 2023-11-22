@@ -1,6 +1,6 @@
 /*
  * @Date: 2023-11-07 01:42:15
- * @LastEditTime: 2023-11-11 13:15:39
+ * @LastEditTime: 2023-11-22 19:08:02
  */
 #ifndef _YMATRIX_H_
 #define _YMATRIX_H_
@@ -155,8 +155,7 @@ private:
     bool CreateHistogram(YTH1 *&phistogram, const TString &pshname);
     bool CreateHistogram(YTH2 *&phistogram, const TString &pshname);
     bool CreateHistogram(YTH3 *&phistogram, const TString &pshname);
-    bool FillHistogramSYM(const double &pde1, const double &pde2, const short &pa, const short &pp, const short &pt, const TString &psoption, const double &pde3 = 0.0);
-    bool FillHistogramNOSYM(const double &pde1, const double &pde2, const short &pa, const short &pp, const short &pt, const TString &psoption, const double &pde3 = 0.0);
+    bool FillHistogram(const bool &pbsym, const double &pde1, const double &pde2, const short &pa, const short &pp, const short &pt, const TString &psoption, const double &pde3 = 0.0);
     bool FillPM();
     bool StoreFile();
 
