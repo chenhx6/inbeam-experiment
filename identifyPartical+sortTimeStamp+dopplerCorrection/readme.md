@@ -1,3 +1,5 @@
+# 流程
+> decode后的文件-> Fit波形 -> SORTTS处理波形数据 -> Hit刻度加多普勒修正 -> matrix做addback和整理矩阵 
 # SORTTS
 > 处理波形分析后的数据快慢成分得到total, alpha, proton
 > 探测器分辨不好的用能量给出total带电粒子
